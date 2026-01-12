@@ -1,36 +1,171 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖥️ Terminal Portfolio
 
-## Getting Started
+A **terminal-style personal portfolio** built with **Next.js 14**, **TypeScript**, and **Tailwind CSS**, designed to feel like a real Linux shell instead of a fake UI.
 
-First, run the development server:
+This project is for engineers who prefer keyboards over buttons and terminals over landing pages.
 
-```bash
+---
+
+## ✨ Features
+
+- Retro **green-on-black terminal UI**
+- Real command-based interaction
+- Keyboard-driven input (no mouse dependency)
+- Command history (`↑ / ↓`)
+- Extensible command registry
+- One-time boot / loading screen
+- ASCII banner
+- Resume download from terminal
+- Deployed on **Vercel**
+
+---
+
+## 🧠 Commands
+
+Available commands inside the terminal:
+
+```text
+help            → list all available commands
+about           → who I am
+skills          → technical skills (CSV-style)
+projects        → list projects
+project <id>    → detailed project info
+education       → academic background
+links           → GitHub, LeetCode, LinkedIn, Resume
+contact         → contact information
+clear           → clear terminal
+neofetch        → system-style profile info
+whoami          → short identity
+sudo            → permission denied :)
+exit            → fake shell exit
+
+Commands are implemented via a command registry pattern, making it easy to add new commands without touching core logic.
+🛠️ Tech Stack
+
+    Framework: Next.js 14 (App Router)
+
+    Language: TypeScript
+
+    Styling: Tailwind CSS
+
+    Deployment: Vercel
+
+    Font: Monospace (terminal-first)
+
+No backend. No unnecessary dependencies. Fast by design.
+📂 Project Structure
+
+.
+├── app/                  # Next.js app router
+│   └── page.tsx          # Main terminal UI
+├── lib/
+│   ├── commands/         # Individual terminal commands
+│   │   └── skills.ts
+│   ├── types.ts          # Shared TypeScript types
+│   └── utils.ts          # Helper utilities
+├── public/
+│   └── Sukanth_Resume_Placeholder.pdf
+├── styles/
+├── next-env.d.ts
+└── README.md
+
+The architecture is intentionally simple and extendable.
+🚀 Getting Started (Local Development)
+
+Clone the repo:
+
+git clone git@github.com:Sukanth19/portfolio.git
+cd portfolio
+
+Install dependencies:
+
+npm install
+# or
+pnpm install
+# or
+yarn install
+
+Run the dev server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The terminal UI hot-reloads as you edit files.
+📄 Resume
 
-## Learn More
+The resume is stored as a static asset:
 
-To learn more about Next.js, take a look at the following resources:
+/public/Sukanth_Resume_Placeholder.pdf
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+It can be:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    Downloaded via the links command
 
-## Deploy on Vercel
+    Updated without touching application logic
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+🌐 Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is deployed on Vercel.
+
+Deployment flow:
+
+    Push to main
+
+    Vercel automatically builds and deploys
+
+    Zero config required
+
+🎯 Why This Exists
+
+Most portfolios are:
+
+    bloated
+
+    generic
+
+    mouse-heavy
+
+    forgettable
+
+This one is:
+
+    fast
+
+    opinionated
+
+    keyboard-first
+
+    engineer-oriented
+
+If you enjoy terminals, you’ll feel at home.
+📬 Contact
+
+    GitHub: https://github.com/Sukanth19
+
+    LinkedIn: https://linkedin.com/in/aniruddha-sukanth
+
+    Email: sukan3066@gmail.com
+
+📝 License
+
+MIT — feel free to fork, modify, and build your own version.
+
+
+---
+
+### Why this README works
+- Explains **what the project is**
+- Shows **architecture maturity**
+- Signals **engineering taste**
+- Looks good to recruiters *and* devs
+- Matches your terminal aesthetic
+
+If you want, next we can:
+- tighten this for **ATS/recruiter scanning**
+- add **screenshots/gifs** (tastefully)
+- add a **“Design Decisions”** section (huge green flag)
+
+Say the word.
