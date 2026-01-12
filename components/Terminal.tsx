@@ -63,7 +63,7 @@ export default function Terminal() {
 
     // Update autocomplete suggestion
     useEffect(() => {
-        if (! input.trim()) {
+        if (! input. trim()) {
             setSuggestion('');
             return;
         }
@@ -82,7 +82,7 @@ export default function Terminal() {
     }, [input]);
 
     const handleSubmit = () => {
-        if (! input.trim()) return;
+        if (! input. trim()) return;
 
         const newHistory:  HistoryEntry[] = [
             ... history,
@@ -114,12 +114,14 @@ export default function Terminal() {
         if (! commandObj) {
             newHistory.push({
                 type: 'error',
-                text: `Command not found: ${cmd}.  Type 'help' for available commands.`,
+                text: `Command not found: ${cmd}.  Type 'help' for available commands. `,
                 timestamp: Date.now(),
             });
         } else {
             try {
-                const output = commandObj.execute(args);
+                // Explicitly type output as string
+                const output: string = commandObj.execute(args) as string;
+
                 newHistory.push({
                     type: 'output',
                     text: output,
@@ -139,7 +141,7 @@ export default function Terminal() {
         setSuggestion('');
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
+    const handleKeyDown = (e: React. KeyboardEvent) => {
         if (e. key === 'Enter') {
             e.preventDefault();
             handleSubmit();
@@ -186,9 +188,9 @@ export default function Terminal() {
 
     // Format output - color ASCII art orange and make URLs clickable
     const formatOutput = (text: string) => {
-        const lines = text. split('\n');
+        const lines = text.split('\n');
 
-        return lines. map((line, i) => {
+        return lines.map((line, i) => {
             // Check for ASCII art
             const isASCII = /[─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬_\/\\|]/.test(line) ||
             line.includes('___') ||
@@ -206,7 +208,7 @@ export default function Terminal() {
             const words = line.split(' ');
             const elements = words.map((word, j) => {
                 // Check if it's a URL
-                if (word.startsWith('http://') || word.startsWith('https://')) {
+                if (word. startsWith('http://') || word.startsWith('https://')) {
                     return (
                         <React.Fragment key={j}>
                         <a
@@ -214,7 +216,7 @@ export default function Terminal() {
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
-                            color: '#61afef',
+                            color:  '#61afef',
                             textDecoration: 'underline',
                             cursor: 'pointer'
                         }}
@@ -246,7 +248,7 @@ export default function Terminal() {
                 }
 
                 // Check if it's the resume link
-                if (word. includes('resume.pdf')) {
+                if (word. includes('resume. pdf')) {
                     return (
                         <React.Fragment key={j}>
                         <a
@@ -254,7 +256,7 @@ export default function Terminal() {
                         download="Sukanth_Resume.pdf"
                         style={{
                             color: '#61afef',
-                            textDecoration:  'underline',
+                            textDecoration: 'underline',
                             cursor: 'pointer'
                         }}
                         >
@@ -269,7 +271,7 @@ export default function Terminal() {
                 return (
                     <React.Fragment key={j}>
                     {word}
-                    {j < words.length - 1 && ' '}
+                    {j < words. length - 1 && ' '}
                     </React.Fragment>
                 );
             });
@@ -303,7 +305,7 @@ export default function Terminal() {
             )}
 
             {entry.type === 'output' && (
-                <div className="whitespace-pre-wrap font-mono mt-2" style={{ color:  'var(--fg)', lineHeight: '1.8' }}>
+                <div className="whitespace-pre-wrap font-mono mt-2" style={{ color: 'var(--fg)', lineHeight: '1.8' }}>
                 {formatOutput(entry.text)}
                 </div>
             )}
