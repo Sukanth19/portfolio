@@ -53,21 +53,6 @@ Commands are implemented via a command registry pattern, making it easy to add n
     Font: Monospace (terminal-first)
 
 No backend. No unnecessary dependencies. Fast by design.
-📂 Project Structure
-
-.
-├── app/                  # Next.js app router
-│   └── page.tsx          # Main terminal UI
-├── lib/
-│   ├── commands/         # Individual terminal commands
-│   │   └── skills.ts
-│   ├── types.ts          # Shared TypeScript types
-│   └── utils.ts          # Helper utilities
-├── public/
-│   └── Sukanth_Resume_Placeholder.pdf
-├── styles/
-├── next-env.d.ts
-└── README.md
 
 The architecture is intentionally simple and extendable.
 🚀 Getting Started (Local Development)
