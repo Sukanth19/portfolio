@@ -1,29 +1,28 @@
 import { Command } from '../types';
 
-export const aboutCommand: Command = {
-    name: 'about',
-    description: 'Learn about me',
+export const aboutCommand:   Command = {
+    name:   'about',
+    description:   'Learn about me',
     execute: () => {
-        return `
-        ┌─────────────────────────────────────────────────────────────┐
-        │                        ABOUT ME                             │
-        └─────────────────────────────────────────────────────────────┘
+        let output = '╔═══════════════════════════════════════════════════════════════════\n';
+        output += '║ ABOUT ME\n';
+        output += '╠═══════════════════════════════════════════════════════════════════\n';
+        output += '║\n';
+        output += "║  I'm Sukanth.\n";
+        output += '║\n';
+        output += '║  I build software, break abstractions, and care about how things\n';
+        output += '║  work under the hood.\n';
+        output += '║\n';
+        output += '║  Interested in full-stack systems, applied ML and real-world\n';
+        output += '║  products. Linux user (Arch + Hyprland).\n';
+        output += '║\n';
+        output += '╠═══════════════════════════════════════════════════════════════════\n';
+        output += '║ Run:\n';
+        output += '║   skills    - tech i use\n';
+        output += '║   projects  - work that matters\n';
+        output += '║   links     - GitHub & contact\n';
+        output += '╚═══════════════════════════════════════════════════════════════════';
 
-        Hey!  I'm Sukanth, a passionate developer and Linux enthusiast.
-
-        🚀 I love building things that live at the intersection of
-        creativity and engineering.
-
-        💻 Currently exploring full-stack development, open-source
-        contributions, and system design.
-
-        🐧 Proud Linux user (Endeavor OS + Hyprland).
-
-        📚 Always learning, always building.
-
-        Type 'skills' to see my technical expertise.
-        Type 'projects' to see what I've built.
-        Type 'links' to connect with me.
-        `.trim();
+        return output;
     },
 };

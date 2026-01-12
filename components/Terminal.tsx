@@ -1,53 +1,39 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import Output from './Output';
-import Input from './Input';
+import BootScreen from './BootScreen';
 import { HistoryEntry } from '@/lib/types';
 import { commands, commandNames } from '@/lib/commands';
-import { parseCommand, getASCIIBanner, getBootSequence, hasBooted, markBooted, autocomplete } from '@/lib/utils';
+import { parseCommand, getASCIIBanner, hasBooted, markBooted } from '@/lib/utils';
 
 export default function Terminal() {
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [input, setInput] = useState('');
+    const [suggestion, setSuggestion] = useState('');
     const [commandHistory, setCommandHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
-    const [isBooting, setIsBooting] = useState(true);
-    const outputEndRef = useRef<HTMLDivElement>(null);
+    const [showBoot, setShowBoot] = useState(true);
+    const [terminalReady, setTerminalReady] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    // Boot sequence on first load
     useEffect(() => {
         if (hasBooted()) {
-            // Already booted in this session, skip boot
-            setIsBooting(false);
+            setShowBoot(false);
+            setTerminalReady(true);
             initializeTerminal();
-            return;
         }
-
-        // Run boot sequence
-        const bootMessages = getBootSequence();
-        let index = 0;
-
-        const bootInterval = setInterval(() => {
-            if (index < bootMessages.length) {
-                setHistory(prev => [...prev, {
-                    type: 'system',
-                    text: bootMessages[index],
-                    timestamp: Date.now(),
-                }]);
-                index++;
-            } else {
-                clearInterval(bootInterval);
-                markBooted();
-                setIsBooting(false);
-                initializeTerminal();
-            }
-        }, 150);
-
-        return () => clearInterval(bootInterval);
     }, []);
 
-    // Initialize terminal with welcome message
+    const handleBootComplete = () => {
+        markBooted();
+        setShowBoot(false);
+        setTimeout(() => {
+            setTerminalReady(true);
+            initializeTerminal();
+        }, 100);
+    };
+
     const initializeTerminal = () => {
         const welcomeMessage = `${getASCIIBanner()}
 
@@ -57,56 +43,78 @@ export default function Terminal() {
         Type 'about' to learn more about me.
         `;
 
-        setHistory(prev => [...prev, {
+        setHistory([{
             type: 'output',
             text: welcomeMessage,
             timestamp: Date.now(),
         }]);
     };
 
-    // Auto-scroll to bottom when history changes
     useEffect(() => {
-        outputEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        inputRef.current?.focus();
+        containerRef.current?.scrollTo(0, containerRef.current.scrollHeight);
     }, [history]);
 
-    // Handle command submission
+    useEffect(() => {
+        const handleClick = () => inputRef.current?.focus();
+        document.addEventListener('click', handleClick);
+        return () => document.removeEventListener('click', handleClick);
+    }, []);
+
+    // Update autocomplete suggestion
+    useEffect(() => {
+        if (! input.trim()) {
+            setSuggestion('');
+            return;
+        }
+
+        const { command } = parseCommand(input);
+        if (command && input === command) {
+            const matches = commandNames.filter(cmd => cmd.startsWith(command. toLowerCase()));
+            if (matches.length === 1 && matches[0] !== command) {
+                setSuggestion(matches[0]. substring(command.length));
+            } else {
+                setSuggestion('');
+            }
+        } else {
+            setSuggestion('');
+        }
+    }, [input]);
+
     const handleSubmit = () => {
         if (! input.trim()) return;
 
-        // Add input to history display
         const newHistory:  HistoryEntry[] = [
             ... history,
             { type: 'input', text:  input, timestamp: Date.now() },
         ];
 
-        // Parse command
         const { command:  cmd, args } = parseCommand(input);
 
-        // Add to command history for up/down arrows
         setCommandHistory(prev => [...prev, input]);
         setHistoryIndex(-1);
 
-        // Execute command
         if (cmd === '') {
             setHistory(newHistory);
             setInput('');
+            setSuggestion('');
             return;
         }
 
-        // Check if clear command
+        // Special handling for clear - reset to welcome screen
         if (cmd === 'clear') {
-            setHistory([]);
+            initializeTerminal();
             setInput('');
+            setSuggestion('');
             return;
         }
 
-        // Find and execute command
         const commandObj = commands[cmd];
 
-        if (!commandObj) {
+        if (! commandObj) {
             newHistory.push({
                 type: 'error',
-                text:  `Command not found: ${cmd}.  Type 'help' for available commands.`,
+                text: `Command not found: ${cmd}.  Type 'help' for available commands.`,
                 timestamp: Date.now(),
             });
         } else {
@@ -114,13 +122,13 @@ export default function Terminal() {
                 const output = commandObj.execute(args);
                 newHistory.push({
                     type: 'output',
-                    text:  output,
-                    timestamp: Date. now(),
+                    text: output,
+                    timestamp: Date.now(),
                 });
             } catch (error) {
                 newHistory.push({
                     type: 'error',
-                    text:  `Error executing command: ${error}`,
+                    text: `Error executing command: ${error}`,
                     timestamp: Date.now(),
                 });
             }
@@ -128,11 +136,24 @@ export default function Terminal() {
 
         setHistory(newHistory);
         setInput('');
+        setSuggestion('');
     };
 
-    // Handle special keys (up/down arrows, tab)
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        // Up arrow - previous command
+        if (e. key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+            return;
+        }
+
+        // Tab or Right Arrow to accept suggestion
+        if ((e.key === 'Tab' || e.key === 'ArrowRight') && suggestion) {
+            e.preventDefault();
+            setInput(input + suggestion);
+            setSuggestion('');
+            return;
+        }
+
         if (e.key === 'ArrowUp') {
             e.preventDefault();
             if (commandHistory.length === 0) return;
@@ -143,9 +164,9 @@ export default function Terminal() {
 
             setHistoryIndex(newIndex);
             setInput(commandHistory[newIndex]);
+            setSuggestion('');
         }
 
-        // Down arrow - next command
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             if (historyIndex === -1) return;
@@ -159,40 +180,173 @@ export default function Terminal() {
                 setHistoryIndex(newIndex);
                 setInput(commandHistory[newIndex]);
             }
-        }
-
-        // Tab - autocomplete
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const { command } = parseCommand(input);
-
-            if (command && input === command) {
-                const completed = autocomplete(command, commandNames);
-                if (completed) {
-                    setInput(completed);
-                }
-            }
+            setSuggestion('');
         }
     };
 
-    if (isBooting) {
-        return (
-            <div className="h-screen w-screen bg-black text-green-400 font-mono p-8 overflow-hidden">
-            <Output history={history} />
-            </div>
-        );
+    // Format output - color ASCII art orange and make URLs clickable
+    const formatOutput = (text: string) => {
+        const lines = text. split('\n');
+
+        return lines. map((line, i) => {
+            // Check for ASCII art
+            const isASCII = /[─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬_\/\\|]/.test(line) ||
+            line.includes('___') ||
+            line.includes('___/');
+
+            if (isASCII) {
+                return (
+                    <div key={i} style={{ color: '#ff8c42' }}>
+                    {line || '\u00A0'}
+                    </div>
+                );
+            }
+
+            // Split by spaces and check each word
+            const words = line.split(' ');
+            const elements = words.map((word, j) => {
+                // Check if it's a URL
+                if (word.startsWith('http://') || word.startsWith('https://')) {
+                    return (
+                        <React.Fragment key={j}>
+                        <a
+                        href={word}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            color: '#61afef',
+                            textDecoration: 'underline',
+                            cursor: 'pointer'
+                        }}
+                        >
+                        {word}
+                        </a>
+                        {j < words.length - 1 && ' '}
+                        </React.Fragment>
+                    );
+                }
+
+                // Check if it's an email
+                if (word.includes('@') && word.includes('.')) {
+                    return (
+                        <React.Fragment key={j}>
+                        <a
+                        href={`mailto:${word}`}
+                        style={{
+                            color: '#61afef',
+                            textDecoration: 'underline',
+                            cursor: 'pointer'
+                        }}
+                        >
+                        {word}
+                        </a>
+                        {j < words.length - 1 && ' '}
+                        </React.Fragment>
+                    );
+                }
+
+                // Check if it's the resume link
+                if (word. includes('resume.pdf')) {
+                    return (
+                        <React.Fragment key={j}>
+                        <a
+                        href="/resume. pdf"
+                        download="Sukanth_Resume.pdf"
+                        style={{
+                            color: '#61afef',
+                            textDecoration:  'underline',
+                            cursor: 'pointer'
+                        }}
+                        >
+                        {word}
+                        </a>
+                        {j < words.length - 1 && ' '}
+                        </React.Fragment>
+                    );
+                }
+
+                // Regular text
+                return (
+                    <React.Fragment key={j}>
+                    {word}
+                    {j < words.length - 1 && ' '}
+                    </React.Fragment>
+                );
+            });
+
+            return <div key={i}>{elements. length > 0 ? elements :  '\u00A0'}</div>;
+        });
+    };
+
+    if (showBoot) {
+        return <BootScreen onComplete={handleBootComplete} />;
+    }
+
+    if (!terminalReady) {
+        return null;
     }
 
     return (
-        <div className="h-screen w-screen bg-black text-green-400 font-mono flex flex-col overflow-hidden crt">
-        <Output history={history} />
-        <div ref={outputEndRef} />
-        <Input
+        <div
+        ref={containerRef}
+        className="h-screen w-screen overflow-y-auto p-8 font-mono"
+        style={{ background: 'var(--bg)', color: 'var(--fg)', fontSize: '0.95rem' }}
+        >
+        <div className="space-y-4 max-w-5xl">
+        {history.map((entry, index) => (
+            <div key={index}>
+            {entry.type === 'input' && (
+                <div className="flex gap-3 mt-6">
+                <span style={{ color: 'var(--mint)' }}>guest@portfolio: ~$</span>
+                <span style={{ color: 'var(--fg)' }}>{entry.text}</span>
+                </div>
+            )}
+
+            {entry.type === 'output' && (
+                <div className="whitespace-pre-wrap font-mono mt-2" style={{ color:  'var(--fg)', lineHeight: '1.8' }}>
+                {formatOutput(entry.text)}
+                </div>
+            )}
+
+            {entry.type === 'error' && (
+                <div className="mt-2" style={{ color: 'var(--error)' }}>
+                {entry.text}
+                </div>
+            )}
+
+            {entry.type === 'system' && (
+                <div className="mt-2" style={{ color: 'var(--mint)' }}>
+                {entry.text}
+                </div>
+            )}
+            </div>
+        ))}
+
+        {/* Inline input with autocomplete */}
+        <div className="flex gap-3 items-center mt-6">
+        <span style={{ color: 'var(--mint)' }}>guest@portfolio:~$</span>
+        <div className="relative flex-1 flex">
+        <span style={{ color: 'var(--fg)' }}>{input}</span>
+        {suggestion && (
+            <span className="autocomplete-hint">
+            {suggestion}
+            </span>
+        )}
+        <input
+        ref={inputRef}
+        type="text"
         value={input}
-        onChange={setInput}
-        onSubmit={handleSubmit}
+        onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
+        className="absolute inset-0 w-full bg-transparent border-none outline-none font-mono opacity-0"
+        style={{ caretColor: 'var(--mint)' }}
+        spellCheck={false}
+        autoComplete="off"
+        autoFocus
         />
+        </div>
+        </div>
+        </div>
         </div>
     );
 }

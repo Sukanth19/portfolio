@@ -3,22 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --terminal-green: #00ff00;
-  --terminal-bg: #000000;
-  --terminal-text: #00ff00;
+  --bg:   #0a0a0a;
+  --fg:  #ffffff;
+  --orange: #ff9e64;
+  --mint: #73daca;
+  --dim: #565f89;
+  --error: #f7768e;
+  --blue: #61afef;
 }
 
 * {
   margin: 0;
-  padding: 0;
+  padding:  0;
   box-sizing: border-box;
 }
 
 body {
-  background:  var(--terminal-bg);
-  color: var(--terminal-text);
-  font-family: 'Courier New', monospace;
-  overflow: hidden;
+  background:  var(--bg);
+  color: var(--fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  overflow:  hidden;
+  line-height: 1.8;
 }
 
 ::-webkit-scrollbar {
@@ -26,41 +31,41 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  border: 2px solid #000;
+  background: var(--dim);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00cc00;
+  background: var(--mint);
 }
 
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-.cursor {
-  animation: blink 1s infinite;
+.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
 }
 
-.crt::before {
-  content: " ";
-  display: block;
-  position: absolute;
+.boot-screen {
+  position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  z-index: 2;
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-.terminal-glow {
-  text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+.autocomplete-hint {
+  color: var(--dim);
+  pointer-events: none;
 }

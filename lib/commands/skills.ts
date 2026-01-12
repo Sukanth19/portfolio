@@ -2,43 +2,39 @@ import { Command } from '../types';
 
 export const skillsCommand: Command = {
     name:  'skills',
-    description:  'View my technical skills',
-    execute:  () => {
-        return `
-        ┌─────────────────────────────────────────────────────────────┐
-        │                       SKILLS                                │
-        └─────────────────────────────────────────────────────────────┘
+    description:  'View my skills',
+    execute:   () => {
+        let output = 'Languages\n';
+        output += '  ├─ JavaScript\n';
+        output += '  ├─ TypeScript\n';
+        output += '  ├─ Python\n';
+        output += '  │    ├─ Pandas\n';
+        output += '  │    └─ NumPy\n';
+        output += '  ├─ Java\n';
+        output += '  ├─ C/C++\n';
+        output += '  |─ SQL\n\n';
 
-        Languages:
-        • JavaScript / TypeScript
-        • Python
-        • Java
-        • C/C++
-        • SQL
+        output += 'Frontend\n';
+        output += '  ├─ React / Next.js\n';
+        output += '  ├─ HTML5 / CSS3\n';
+        output += '  ├─ Tailwind CSS\n';
+        output += '  └─ Redux\n\n';
 
-        Frontend:
-        • React / Next. js
-        • HTML5 / CSS3
-        • Tailwind CSS
-        • Redux
+        output += 'Backend\n';
+        output += '  ├─ Node.js / Express\n';
+        output += '  └─ RESTful APIs\n\n';
 
-        Backend:
-        • Node.js / Express
-        • RESTful APIs
-        • PostgreSQL / MongoDB
-        • Redis
+        output += 'Tools & Platforms\n';
+        output += '  ├─ Git / GitHub\n';
+        output += '  ├─ Linux (Arch)\n';
+        output += '  ├─ Docker\n';
+        output += '  ├─ Vercel / AWS / Google Cloud\n';
+        output += '  └─ VS Code / Neovim\n\n';
 
-        Tools & Platforms:
-        • Git / GitHub
-        • Linux (Endeavor OS)
-        • Docker
-        • Vercel / AWS
-        • VS Code / Neovim
+        output += 'Currently Learning\n';
+        output += '  ├─ ML (Deep Learning)\n';
+        output += '  └─ Rust';
 
-        Currently Learning:
-        • System Design
-        • DevOps / CI-CD
-        • Rust
-        `.trim();
+        return output;
     },
 };

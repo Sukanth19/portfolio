@@ -1,31 +1,20 @@
 import { Command } from '../types';
 
 export const educationCommand: Command = {
-    name:  'education',
-    description:  'View my educational background',
+    name: 'education',
+    description: 'View my educational background',
     execute: () => {
-        return `
-        ┌─────────────────────────────────────────────────────────────┐
-        │                      EDUCATION                              │
-        └─────────────────────────────────────────────────────────────┘
+        let output = 'EDUCATION\n\n';
+        output += 'Degree\n';
+        output += '  ├─Bachelor of Technology in Computer Science\n';
+        output += '  ├─Amrita Vishwa Vidyapeetham  •  2024 - 2028\n';
+        output += 'Coursework\n';
+        output += '  ├─ Data Structures & Algorithms\n';
+        output += '  ├─ Operating Systems\n';
+        output += '  ├─ Database Management Systems\n';
+        output += '  ├─ Computer Networks\n';
+        output += '  └─ Software Engineering\n\n';
 
-        🎓 Bachelor of Technology in Computer Science
-        Your University Name
-        2020 - 2024
-        CGPA: X.XX/10.00
-
-        Relevant Coursework:
-        • Data Structures & Algorithms
-        • Operating Systems
-        • Database Management Systems
-        • Computer Networks
-        • Software Engineering
-
-        Certifications:
-        • [Add your certifications here]
-        • [AWS, Azure, etc.]
-
-        Type 'skills' to see my technical expertise.
-        `.trim();
+        return output;
     },
 };
