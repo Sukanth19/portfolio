@@ -49,7 +49,7 @@ export const linkedinCommand:  Command = {
     name:  'linkedin',
     description:  'Open LinkedIn profile',
     execute:  () => {
-        window.open('https://linkedin.com/in/aniruddha-sukanth-a21892332', '_blank');
+        window.open('www.linkedin.com/in/aniruddhasukanth', '_blank');
         return '✓ Opening LinkedIn profile in new tab...';
     },
 };
