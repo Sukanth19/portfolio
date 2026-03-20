@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Theme colors will be set dynamically by ThemeProvider */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #e5e5e5;
+  
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-accent: #2563eb;
+  
+  --color-interactive-primary: #2563eb;
+  --color-interactive-secondary: #4f46e5;
+  --color-interactive-hover: #1d4ed8;
+  --color-interactive-active: #1e40af;
+  
+  --color-border-default: #d4d4d4;
+  --color-border-accent: #2563eb;
+  
+  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+  --gradient-secondary: linear-gradient(90deg, #1d4ed8 0%, #7c3aed 100%);
+  --gradient-accent: linear-gradient(180deg, #4f46e5 0%, #2563eb 100%);
+  
+  --effect-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --effect-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --effect-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.2);
+  
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 300ms;
+  --transition-duration-slow: 600ms;
+  --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  transition: background-color var(--transition-duration-normal) var(--transition-easing),
+              color var(--transition-duration-normal) var(--transition-easing);
+}
+
+/* Smooth transitions for all theme-aware elements */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: var(--transition-duration-normal);
+  transition-timing-function: var(--transition-easing);
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skip to content link for screen readers */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-interactive-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  z-index: 10000;
+  border-radius: 0 0 4px 0;
+  font-weight: 600;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Enhanced focus indicators for all focusable elements */
+*:focus-visible {
+  outline: 2px solid var(--color-interactive-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}

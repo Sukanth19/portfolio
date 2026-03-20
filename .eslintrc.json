@@ -1,0 +1,4 @@
+{
+  "extends": "next/core-web-vitals",
+  "ignorePatterns": ["**/__test__*.tsx", "**/__example__*.tsx"]
+}
