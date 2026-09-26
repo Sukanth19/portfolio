@@ -5,6 +5,7 @@ import { BootSequence } from '@/components/BootSequence'
 import { CursorSystem } from '@/components/interactive/CursorSystem'
 import { BackgroundSystem } from '@/components/interactive/BackgroundSystem'
 import { EnvironmentSystem } from '@/components/interactive/EnvironmentSystem'
+import { GlitchEffect } from '@/components/effects/GlitchEffect'
 import { Navigation } from '@/components/Navigation'
 import { CommandPalette } from '@/components/CommandPalette'
 import { Hero } from '@/components/Hero'
@@ -17,10 +18,12 @@ import { TerminalNew } from '@/components/TerminalNew'
 import { Footer } from '@/components/Footer'
 import { SettingsPanel } from '@/components/SettingsPanel'
 import { useKeyboard } from '@/hooks/useKeyboard'
+import { useKonamiCode } from '@/hooks/useKonamiCode'
 
 export default function Home() {
   const [booted, setBooted] = useState(false)
   const [showBootSequence, setShowBootSequence] = useState(true)
+  const [glitchActive, setGlitchActive] = useState(false)
   const { commandPaletteOpen, setCommandPaletteOpen } = useKeyboard()
 
   useEffect(() => {
@@ -38,8 +41,18 @@ export default function Home() {
       }
     }
 
+    // Listen for glitch toggle
+    const handleGlitchToggle = () => {
+      setGlitchActive(prev => !prev)
+    }
+
     window.addEventListener('keydown', handleEscape)
-    return () => window.removeEventListener('keydown', handleEscape)
+    window.addEventListener('toggleGlitch', handleGlitchToggle)
+    
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+      window.removeEventListener('toggleGlitch', handleGlitchToggle)
+    }
   }, [booted])
 
   const handleBootComplete = () => {
@@ -63,6 +76,45 @@ export default function Home() {
     }
   }
 
+  // Konami Code Easter Egg
+  useKonamiCode(() => {
+    // Enable glitch mode and show snake game
+    setGlitchActive(true)
+    // Show a fun notification
+    const notification = document.createElement('div')
+    notification.innerHTML = '🎮 KONAMI CODE ACTIVATED! Unlocking retro mode...'
+    notification.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(184, 174, 216, 0.95);
+      color: #0a0a0d;
+      padding: 20px 40px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 0 30px rgba(184, 174, 216, 0.8);
+      animation: fadeInOut 3s ease-in-out;
+    `
+    document.body.appendChild(notification)
+    
+    setTimeout(() => {
+      notification.remove()
+    }, 3000)
+
+    // Add CSS animation
+    const style = document.createElement('style')
+    style.textContent = `
+      @keyframes fadeInOut {
+        0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+        10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+    `
+    document.head.appendChild(style)
+  })
+
   return (
     <>
       {showBootSequence && !booted && (
@@ -74,6 +126,7 @@ export default function Home() {
           <CursorSystem />
           <BackgroundSystem />
           <EnvironmentSystem />
+          <GlitchEffect isActive={glitchActive} />
           <Navigation onNavigate={handleNavigate} />
           <CommandPalette
             isOpen={commandPaletteOpen}

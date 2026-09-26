@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   keywords: ['developer', 'portfolio', 'computer science', 'AI', 'ML', 'cybersecurity', 'game development'],
   authors: [{ name: 'Sukanth' }],
   creator: 'Sukanth',
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_US',
