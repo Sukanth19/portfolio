@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { experiences } from '@/data/experience'
 import { socials } from '@/data/socials'
 import { terminalCommands, terminalConfig } from '@/data/terminal'
+import { SnakeGame } from './games/SnakeGame'
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error'
@@ -30,6 +31,7 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
   const inputRef = useRef<HTMLDivElement>(null)
   const terminalRef = useRef<HTMLDivElement>(null)
   const [cursorVisible, setCursorVisible] = useState(true)
+  const [showSnake, setShowSnake] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -94,6 +96,8 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '  history     - Command history',
       '  clear       - Clear terminal',
       '  echo <text> - Echo text',
+      '  snake       - Play Snake game',
+      '  glitch      - Toggle glitch mode',
     ],
     about: () => [
       'Computer Science student who learns by building.',
@@ -174,6 +178,14 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
     sudo: () => 'Nice try. 😎',
     'rm -rf /': () => 'Permission denied. (Thankfully.)',
     echo: () => input.split(' ').slice(1).join(' ') || '',
+    snake: () => {
+      setShowSnake(true)
+      return 'Loading Snake game...'
+    },
+    glitch: () => {
+      window.dispatchEvent(new CustomEvent('toggleGlitch'))
+      return 'Glitch mode toggled. Reality.exe has stopped responding...'
+    },
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -346,7 +358,13 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
   const isMaximized = windowState === 'maximized'
 
   return (
-    <motion.div
+    <>
+      {/* Snake Game Modal */}
+      <AnimatePresence>
+        {showSnake && <SnakeGame onClose={() => setShowSnake(false)} />}
+      </AnimatePresence>
+
+      <motion.div
       className={`fixed z-50 ${
         isMaximized 
           ? 'inset-0 p-8 bg-black/90 backdrop-blur-md flex items-center justify-center'
@@ -468,5 +486,6 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
         </div>
       </div>
     </motion.div>
+    </>
   )
 }

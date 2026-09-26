@@ -19,6 +19,7 @@ const commands = [
   { id: 'contact', label: 'Connect', icon: '→' },
   { id: 'github', label: 'Open GitHub', icon: '↗' },
   { id: 'terminal', label: 'Open Terminal', icon: '>' },
+  { id: 'glitch', label: 'Toggle Glitch Mode', icon: '⚡' },
 ]
 
 export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPaletteProps) {
@@ -65,6 +66,8 @@ export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPalettePr
       window.open('https://github.com/Sukanth19', '_blank')
     } else if (commandId === 'terminal') {
       onNavigate('terminal')
+    } else if (commandId === 'glitch') {
+      window.dispatchEvent(new CustomEvent('toggleGlitch'))
     } else {
       onNavigate(commandId)
     }

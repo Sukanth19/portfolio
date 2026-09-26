@@ -13,6 +13,8 @@ export const terminalCommands = [
   'clear',
   'sudo',
   'echo',
+  'snake',
+  'glitch',
 ] as const
 
 export type TerminalCommand = typeof terminalCommands[number]
