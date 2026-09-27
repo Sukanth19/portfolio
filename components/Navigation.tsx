@@ -16,7 +16,9 @@ export function Navigation({ onNavigate }: NavigationProps) {
     { id: 'experience', label: 'EXPERIENCE', shortcut: 'Ctrl+E' },
     { id: 'projects', label: 'PROJECTS', shortcut: 'Ctrl+P' },
     { id: 'stack', label: 'STACK', shortcut: 'Ctrl+S' },
+    { id: 'build-log', label: 'BUILD LOG', shortcut: 'Ctrl+B' },
     { id: 'lab', label: 'LAB', shortcut: 'Ctrl+L' },
+    { id: 'archive', label: 'ARCHIVE', shortcut: 'Ctrl+R' },
   ]
 
   const handleLogoClick = () => {
