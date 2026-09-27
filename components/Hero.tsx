@@ -143,6 +143,30 @@ export function Hero() {
                 </motion.button>
               ))}
             </div>
+
+            {/* Environment info - compact */}
+            <div className="pt-6">
+              <div className="border border-gray-muted/20 bg-void-light/20 p-4">
+                <div className="text-xs font-mono text-crimson mb-3 flex items-center gap-2">
+                  <span>ENVIRONMENT</span>
+                  <div className="flex-1 h-px bg-gradient-to-r from-crimson/40 to-transparent" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs font-mono">
+                  <div className="flex justify-between">
+                    <span className="text-gray-muted">OS</span>
+                    <span className="text-text-light">ARCH LINUX</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-muted">WM</span>
+                    <span className="text-text-light">HYPRLAND</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-muted">SHELL</span>
+                    <span className="text-text-light">ZSH</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Scroll indicator */}

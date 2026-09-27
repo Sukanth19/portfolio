@@ -14,7 +14,6 @@ import { ExperienceSection } from '@/components/ExperienceSection'
 import { ProjectsSection } from '@/components/projects/ProjectsSection'
 import { TechStackSection } from '@/components/TechStackSection'
 import { LabSection } from '@/components/LabSection'
-import { EnvironmentSection } from '@/components/EnvironmentSection'
 import { TerminalNew } from '@/components/TerminalNew'
 import { Footer } from '@/components/Footer'
 import { SettingsPanel } from '@/components/SettingsPanel'
@@ -144,7 +143,6 @@ export default function Home() {
           <ProjectsSection />
           <TechStackSection />
           <LabSection />
-          <EnvironmentSection />
           <Footer />
           <SettingsPanel />
           <TerminalNew initialState="minimized" />
