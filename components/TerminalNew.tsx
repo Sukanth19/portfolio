@@ -5,7 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { experiences } from '@/data/experience'
 import { socials } from '@/data/socials'
 import { terminalCommands, terminalConfig } from '@/data/terminal'
+import { projects } from '@/data/projects'
+import { buildLog } from '@/data/buildLog'
+import { archivedProjects } from '@/data/archive'
 import { SnakeGame } from './games/SnakeGame'
+import { TerminalFullscreen } from './TerminalFullscreen'
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error'
@@ -88,7 +92,9 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '  experience  - View experience',
       '  projects    - List all projects',
       '  stack       - View tech stack',
+      '  buildlog    - View build log',
       '  lab         - See experiments',
+      '  archive     - View archived projects',
       '  github      - Open GitHub profile',
       '  contact     - Get contact info',
       '  neofetch    - System information',
@@ -118,14 +124,13 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       })
       return output
     },
-    projects: () => [
-      'Projects:',
-      '  jamr.io        - Real-time music matchmaking',
-      '  SneakerNet     - Sneaker intelligence platform',
-      '  Eidothea       - Archive of the unexplained',
-      '  Typing Tester  - Canvas-based typing game',
-      '  Image to ASCII - Image conversion utility',
-    ],
+    projects: () => {
+      const output = ['Projects:', '']
+      projects.forEach(p => {
+        output.push(`  ${p.title.padEnd(20)} - ${p.tagline}`)
+      })
+      return output
+    },
     stack: () => [
       'Languages: C, C++, Python, JavaScript, TypeScript, Java',
       'Web: React, Next.js, FastAPI, Flask, Laravel, PHP',
@@ -141,6 +146,29 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '  [ACTIVE]      Cybersecurity Lab',
       '  [ACTIVE]      Home Lab',
     ],
+    buildlog: () => {
+      const output = ['BUILD LOG', '']
+      buildLog.forEach(entry => {
+        output.push(`[${entry.date}]`)
+        output.push(`├── ${entry.title}`)
+        if (entry.project) {
+          output.push(`│   └── ${entry.project}`)
+        }
+        output.push(`└── ${entry.status}`)
+        output.push('')
+      })
+      return output
+    },
+    archive: () => {
+      const output = ['ARCHIVE', '']
+      archivedProjects.forEach(project => {
+        output.push(`${project.title}`)
+        output.push(`├── ${project.status} (${project.year})`)
+        output.push(`└── ${project.description}`)
+        output.push('')
+      })
+      return output
+    },
     github: () => {
       const githubLink = socials.find(s => s.id === 'github')
       if (githubLink) {
@@ -162,11 +190,12 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '         _____           ',
       '        /     \\          SUKANTH',
       '       | O   O |         ────────────────',
-      '       |   ^   |         OS:       Linux',
-      '       |  \\_/  |         EDITOR:   Neovim',
-      '        \\_____/          SHELL:    zsh',
+      '       |   ^   |         OS:       ARCH LINUX',
+      '       |  \\_/  |         EDITOR:   NEOVIM',
+      '        \\_____/          WM:       HYPRLAND',
+      '                         SHELL:    ZSH',
       '                         ROLE:     SDE',
-      '                         FOCUS:    Building',
+      '                         FOCUS:    BUILDING',
       '                         STATUS:   ONLINE',
     ],
     whoami: () => 'Sukanth - Developer / Builder / Experimenter',
@@ -357,6 +386,62 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
 
   const isMaximized = windowState === 'maximized'
 
+  // Render terminal content
+  const terminalContent = (
+    <div
+      ref={terminalRef}
+      className="flex-1 p-4 font-mono text-sm overflow-y-auto"
+      onClick={() => inputRef.current?.focus()}
+      style={{ minHeight: isMaximized ? 0 : '300px' }}
+    >
+      {lines.map((line, i) => (
+        <div key={i} className="mb-1">
+          {line.type === 'input' && (
+            <div className="flex items-start gap-2">
+              <span className="text-lavender">{terminalConfig.prompt}</span>
+              <span className="text-text-light">{line.content}</span>
+            </div>
+          )}
+          {line.type === 'output' && (
+            <div className="text-gray-muted whitespace-pre-wrap">
+              {line.content}
+            </div>
+          )}
+          {line.type === 'error' && (
+            <div className="text-crimson">{line.content}</div>
+          )}
+        </div>
+      ))}
+
+      {/* Input line */}
+      <div className="flex items-start gap-2">
+        <span className="text-lavender">{terminalConfig.prompt}</span>
+        <div className="flex-1 relative">
+          <div
+            ref={inputRef}
+            contentEditable
+            suppressContentEditableWarning
+            onKeyDown={handleKeyDown}
+            className="outline-none text-text-light inline-block min-w-[1ch]"
+            style={{ caretColor: 'transparent' }}
+          >
+            {input}
+          </div>
+          {cursorVisible && (
+            <span className="inline-block w-2 h-4 bg-lavender ml-[1px] align-middle">
+              {' '}
+            </span>
+          )}
+          {suggestion && input && (
+            <span className="text-gray-muted/40 absolute left-[${input.length}ch]">
+              {suggestion.slice(input.length)}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+
   return (
     <>
       {/* Snake Game Modal */}
@@ -364,128 +449,93 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
         {showSnake && <SnakeGame onClose={() => setShowSnake(false)} />}
       </AnimatePresence>
 
-      <motion.div
-      className={`fixed z-50 ${
-        isMaximized 
-          ? 'inset-0 p-8 bg-black/90 backdrop-blur-md flex items-center justify-center'
-          : 'bottom-24 left-8 right-8 md:left-auto md:right-auto md:w-[600px]'
-      }`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      layout
-    >
-      {/* Maximized decorations */}
-      {isMaximized && (
-        <>
-          {/* Left side elements */}
-          <div className="absolute left-8 top-1/4 space-y-4 text-xs font-mono text-lavender/20 pointer-events-none">
-            <motion.div animate={{ x: [-5, 5, -5] }} transition={{ duration: 8, repeat: Infinity }}>
-              ▓▓░░
-            </motion.div>
-            <div>SYS: 0x{Math.random().toString(16).slice(2, 6).toUpperCase()}</div>
-            <div>▲ ▼ ◆</div>
-          </div>
-
-          {/* Right side elements */}
-          <div className="absolute right-8 top-1/3 space-y-4 text-xs font-mono text-lavender/20 pointer-events-none">
-            <motion.div animate={{ x: [5, -5, 5] }} transition={{ duration: 6, repeat: Infinity }}>
-              ░░▓▓
-            </motion.div>
-            <div>NET: OK</div>
-            <div>アイウ</div>
-          </div>
-        </>
-      )}
-
-      <div className={`${isMaximized ? 'w-full max-w-5xl h-[80vh]' : 'w-full'} bg-void-light border border-gray-muted/30 rounded-lg shadow-2xl overflow-hidden flex flex-col`}>
-        {/* Terminal header */}
-        <div className="bg-void border-b border-gray-muted/30 px-4 py-2 flex items-center justify-between cursor-move">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleClose}
-              className="w-3 h-3 rounded-full bg-crimson/60 hover:bg-crimson transition-colors interactive relative group"
-            >
-              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
-                ×
-              </span>
-            </button>
-            <button
-              onClick={handleMinimize}
-              className="w-3 h-3 rounded-full bg-purple-deep/60 hover:bg-purple-deep transition-colors interactive relative group"
-            >
-              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
-                −
-              </span>
-            </button>
-            <button
-              onClick={handleMaximize}
-              className="w-3 h-3 rounded-full bg-lavender/60 hover:bg-lavender transition-colors interactive relative group"
-            >
-              <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
-                {isMaximized ? '↙' : '↗'}
-              </span>
-            </button>
-            <span className="ml-4 text-xs font-mono text-gray-muted">
-              {terminalConfig.prompt}
-            </span>
-          </div>
-        </div>
-
-        {/* Terminal content */}
-        <div
-          ref={terminalRef}
-          className="flex-1 p-4 font-mono text-sm overflow-y-auto"
-          onClick={() => inputRef.current?.focus()}
-          style={{ minHeight: isMaximized ? 0 : '300px' }}
-        >
-          {lines.map((line, i) => (
-            <div key={i} className="mb-1">
-              {line.type === 'input' && (
-                <div className="flex items-start gap-2">
-                  <span className="text-lavender">{terminalConfig.prompt}</span>
-                  <span className="text-text-light">{line.content}</span>
-                </div>
-              )}
-              {line.type === 'output' && (
-                <div className="text-gray-muted whitespace-pre-wrap">
-                  {line.content}
-                </div>
-              )}
-              {line.type === 'error' && (
-                <div className="text-crimson">{line.content}</div>
-              )}
-            </div>
-          ))}
-
-          {/* Input line */}
-          <div className="flex items-start gap-2">
-            <span className="text-lavender">{terminalConfig.prompt}</span>
-            <div className="flex-1 relative">
-              <div
-                ref={inputRef}
-                contentEditable
-                suppressContentEditableWarning
-                onKeyDown={handleKeyDown}
-                className="outline-none text-text-light inline-block min-w-[1ch]"
-                style={{ caretColor: 'transparent' }}
-              >
-                {input}
+      {isMaximized ? (
+        <TerminalFullscreen currentContext="SYSTEM">
+          <div className="h-full flex flex-col">
+            {/* Terminal header */}
+            <div className="bg-void border-b border-gray-muted/30 px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleClose}
+                  className="w-3 h-3 rounded-full bg-crimson/60 hover:bg-crimson transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    ×
+                  </span>
+                </button>
+                <button
+                  onClick={handleMinimize}
+                  className="w-3 h-3 rounded-full bg-purple-deep/60 hover:bg-purple-deep transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    −
+                  </span>
+                </button>
+                <button
+                  onClick={handleMaximize}
+                  className="w-3 h-3 rounded-full bg-lavender/60 hover:bg-lavender transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    ↙
+                  </span>
+                </button>
+                <span className="ml-4 text-xs font-mono text-gray-muted">
+                  {terminalConfig.prompt}
+                </span>
               </div>
-              {cursorVisible && (
-                <span className="inline-block w-2 h-4 bg-lavender ml-[1px] align-middle">
-                  {' '}
-                </span>
-              )}
-              {suggestion && input && (
-                <span className="text-gray-muted/40 absolute left-[${input.length}ch]">
-                  {suggestion.slice(input.length)}
-                </span>
-              )}
             </div>
+            {terminalContent}
           </div>
-        </div>
-      </div>
-    </motion.div>
+        </TerminalFullscreen>
+      ) : (
+        <motion.div
+          className={`fixed z-50 ${
+            isMaximized 
+              ? 'inset-0 p-8 bg-black/90 backdrop-blur-md flex items-center justify-center'
+              : 'bottom-24 left-8 right-8 md:left-auto md:right-auto md:w-[600px]'
+          }`}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          layout
+        >
+          <div className={`${isMaximized ? 'w-full max-w-5xl h-[80vh]' : 'w-full'} bg-void-light border border-gray-muted/30 rounded-lg shadow-2xl overflow-hidden flex flex-col`}>
+            {/* Terminal header */}
+            <div className="bg-void border-b border-gray-muted/30 px-4 py-2 flex items-center justify-between cursor-move">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleClose}
+                  className="w-3 h-3 rounded-full bg-crimson/60 hover:bg-crimson transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    ×
+                  </span>
+                </button>
+                <button
+                  onClick={handleMinimize}
+                  className="w-3 h-3 rounded-full bg-purple-deep/60 hover:bg-purple-deep transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    −
+                  </span>
+                </button>
+                <button
+                  onClick={handleMaximize}
+                  className="w-3 h-3 rounded-full bg-lavender/60 hover:bg-lavender transition-colors interactive relative group"
+                >
+                  <span className="absolute inset-0 flex items-center justify-center text-[8px] text-void opacity-0 group-hover:opacity-100">
+                    ↗
+                  </span>
+                </button>
+                <span className="ml-4 text-xs font-mono text-gray-muted">
+                  {terminalConfig.prompt}
+                </span>
+              </div>
+            </div>
+
+            {terminalContent}
+          </div>
+        </motion.div>
+      )}
     </>
   )
 }
