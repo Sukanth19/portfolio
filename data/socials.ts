@@ -6,6 +6,7 @@ export interface SocialLink {
   icon: string
   showInQuickLinks?: boolean
   showInTerminal?: boolean
+  showInConnect?: boolean
 }
 
 export const socials: SocialLink[] = [
@@ -17,6 +18,7 @@ export const socials: SocialLink[] = [
     icon: 'github',
     showInQuickLinks: true,
     showInTerminal: true,
+    showInConnect: true,
   },
   {
     id: 'linkedin',
@@ -26,6 +28,7 @@ export const socials: SocialLink[] = [
     icon: 'linkedin',
     showInQuickLinks: true,
     showInTerminal: true,
+    showInConnect: true,
   },
   {
     id: 'leetcode',
@@ -35,6 +38,7 @@ export const socials: SocialLink[] = [
     icon: 'leetcode',
     showInQuickLinks: true,
     showInTerminal: true,
+    showInConnect: true,
   },
   {
     id: 'discord',
@@ -44,6 +48,7 @@ export const socials: SocialLink[] = [
     icon: 'discord',
     showInQuickLinks: true,
     showInTerminal: true,
+    showInConnect: true,
   },
   {
     id: 'kaggle',
