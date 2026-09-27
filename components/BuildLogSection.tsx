@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { buildLog, type BuildLogEntry } from '@/data/buildLog'
 import { fetchRecentCommits, fetchGitHubTotalStats, type GitHubCommit } from '@/lib/github'
+import { SystemCoordinates } from './ui/SystemCoordinates'
+import { SystemTimestamp } from './ui/SystemTimestamp'
 
 function formatGitHubDate(dateString: string): string {
   const date = new Date(dateString)
@@ -35,6 +37,7 @@ export function BuildLogSection() {
   const [totalStats, setTotalStats] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [useGitHub, setUseGitHub] = useState(true)
+  const [showAllCommits, setShowAllCommits] = useState(false)
 
   useEffect(() => {
     const loadGitHubData = async () => {
@@ -77,6 +80,9 @@ export function BuildLogSection() {
     ? commits.map(commitToLogEntry)
     : buildLog
 
+  // Show only 3 commits initially
+  const visibleLog = showAllCommits ? displayLog : displayLog.slice(0, 3)
+
   const statusColors = {
     'BUILT': 'text-lavender',
     'EXPERIMENT': 'text-purple-deep',
@@ -86,30 +92,47 @@ export function BuildLogSection() {
   }
 
   return (
-    <section id="build-log" className="py-24 px-8">
-      <div className="max-w-5xl mx-auto">
+    <section id="build-log" className="py-24 px-8 bg-void-light/30">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-12"
+          className="mb-16"
         >
-          <div className="flex items-center gap-4 mb-2">
-            <h2 className="text-3xl font-bold text-text-light font-mono">BUILD LOG</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-lavender/40 to-transparent" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <motion.div 
+                className="w-12 h-px bg-crimson"
+                whileHover={{ width: 60 }}
+                transition={{ duration: 0.2 }}
+              />
+              <motion.h2 
+                className="text-sm font-mono text-crimson"
+                whileHover={{ scale: 1.1, x: 4 }}
+                transition={{ duration: 0.2 }}
+              >
+                07
+              </motion.h2>
+            </div>
+            <div className="flex items-center gap-4">
+              <SystemCoordinates x={720} y={140} />
+              <SystemTimestamp />
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-mono text-gray-muted">
-              {useGitHub ? 'Live GitHub activity' : 'Engineering activity'} • experiments • builds
-            </p>
-            {totalStats && (
-              <div className="flex gap-4 text-xs font-mono text-gray-muted">
-                <span className="text-lavender">{totalStats.totalCommits}+ commits</span>
-                <span className="text-purple-deep">{totalStats.totalRepos} repos</span>
-              </div>
-            )}
-          </div>
+          <h2 className="text-5xl font-bold text-text-light mb-4">
+            BUILD LOG
+          </h2>
+          <p className="text-gray-muted font-mono text-sm max-w-2xl">
+            {useGitHub ? 'Live GitHub activity' : 'Engineering activity'} • experiments • builds
+          </p>
+          {totalStats && (
+            <div className="flex gap-6 text-xs font-mono text-gray-muted mt-2">
+              <span className="text-lavender">{totalStats.totalCommits}+ commits</span>
+              <span className="text-purple-deep">{totalStats.totalRepos} repos</span>
+            </div>
+          )}
           {isLoading && (
             <p className="text-xs font-mono text-lavender/60 mt-2">
               Loading GitHub activity...
@@ -124,7 +147,7 @@ export function BuildLogSection() {
 
           {/* Entries */}
           <div className="space-y-6">
-            {displayLog.map((entry, index) => (
+            {visibleLog.map((entry, index) => (
               <motion.div
                 key={entry.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -211,11 +234,33 @@ export function BuildLogSection() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mt-8 text-xs font-mono text-gray-muted/60 text-center"
+          className="mt-8 text-center"
         >
-          <span>──────────</span>
-          <span className="mx-2">ONGOING</span>
-          <span>──────────</span>
+          {!showAllCommits && displayLog.length > 3 && (
+            <motion.button
+              onClick={() => setShowAllCommits(true)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 border border-lavender/30 bg-void-light/30 text-lavender font-mono text-xs hover:bg-lavender/10 hover:border-lavender transition-all mb-4"
+            >
+              SHOW ALL {displayLog.length} COMMITS ▼
+            </motion.button>
+          )}
+          {showAllCommits && (
+            <motion.button
+              onClick={() => setShowAllCommits(false)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 border border-lavender/30 bg-void-light/30 text-lavender font-mono text-xs hover:bg-lavender/10 hover:border-lavender transition-all mb-4"
+            >
+              SHOW LESS ▲
+            </motion.button>
+          )}
+          <div className="text-xs font-mono text-gray-muted/60">
+            <span>──────────</span>
+            <span className="mx-2">ONGOING</span>
+            <span>──────────</span>
+          </div>
         </motion.div>
       </div>
     </section>

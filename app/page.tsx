@@ -144,9 +144,9 @@ export default function Home() {
           <ExperienceSection />
           <ProjectsSection />
           <TechStackSection />
+          <LabSection />
           <BuildLogSection />
           <TopRepositories />
-          <LabSection />
           <Footer />
           <SettingsPanel />
           <TerminalNew initialState="minimized" />
