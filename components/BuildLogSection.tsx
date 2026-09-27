@@ -1,11 +1,81 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { buildLog } from '@/data/buildLog'
+import { useState, useEffect } from 'react'
+import { buildLog, type BuildLogEntry } from '@/data/buildLog'
+import { fetchRecentCommits, fetchGitHubTotalStats, type GitHubCommit } from '@/lib/github'
+
+function formatGitHubDate(dateString: string): string {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}.${month}.${day}`
+}
+
+function commitToLogEntry(commit: GitHubCommit): BuildLogEntry {
+  // Truncate commit message to first line
+  const title = commit.message.split('\n')[0].slice(0, 80)
+  const description = commit.message.split('\n').slice(1).join('\n').trim()
+  
+  return {
+    id: commit.sha,
+    date: formatGitHubDate(commit.date),
+    title: title,
+    project: commit.repoName.toUpperCase(),
+    description: description || `${commit.additions || 0}++ ${commit.deletions || 0}--`,
+    status: 'BUILT',
+    technologies: []
+  }
+}
 
 export function BuildLogSection() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [commits, setCommits] = useState<GitHubCommit[]>([])
+  const [totalStats, setTotalStats] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [useGitHub, setUseGitHub] = useState(true)
+
+  useEffect(() => {
+    const loadGitHubData = async () => {
+      const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN
+      const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'Sukanth19'
+      
+      if (!token) {
+        console.warn('No GitHub token found, using static build log')
+        setIsLoading(false)
+        setUseGitHub(false)
+        return
+      }
+
+      try {
+        const [recentCommits, stats] = await Promise.all([
+          fetchRecentCommits(username, token, 10),
+          fetchGitHubTotalStats(username, token)
+        ])
+
+        if (recentCommits.length > 0) {
+          setCommits(recentCommits)
+        } else {
+          setUseGitHub(false)
+        }
+        
+        setTotalStats(stats)
+      } catch (error) {
+        console.error('Failed to load GitHub data:', error)
+        setUseGitHub(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    loadGitHubData()
+  }, [])
+
+  // Use GitHub commits if available, otherwise fall back to static log
+  const displayLog: BuildLogEntry[] = useGitHub && commits.length > 0
+    ? commits.map(commitToLogEntry)
+    : buildLog
 
   const statusColors = {
     'BUILT': 'text-lavender',
@@ -29,9 +99,22 @@ export function BuildLogSection() {
             <h2 className="text-3xl font-bold text-text-light font-mono">BUILD LOG</h2>
             <div className="flex-1 h-px bg-gradient-to-r from-lavender/40 to-transparent" />
           </div>
-          <p className="text-sm font-mono text-gray-muted">
-            Engineering activity • experiments • builds
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-mono text-gray-muted">
+              {useGitHub ? 'Live GitHub activity' : 'Engineering activity'} • experiments • builds
+            </p>
+            {totalStats && (
+              <div className="flex gap-4 text-xs font-mono text-gray-muted">
+                <span className="text-lavender">{totalStats.totalCommits}+ commits</span>
+                <span className="text-purple-deep">{totalStats.totalRepos} repos</span>
+              </div>
+            )}
+          </div>
+          {isLoading && (
+            <p className="text-xs font-mono text-lavender/60 mt-2">
+              Loading GitHub activity...
+            </p>
+          )}
         </motion.div>
 
         {/* Timeline */}
@@ -41,7 +124,7 @@ export function BuildLogSection() {
 
           {/* Entries */}
           <div className="space-y-6">
-            {buildLog.map((entry, index) => (
+            {displayLog.map((entry, index) => (
               <motion.div
                 key={entry.id}
                 initial={{ opacity: 0, x: -20 }}

@@ -250,3 +250,267 @@ export async function fetchGitHubUserInfo(username: string, token?: string) {
     return null
   }
 }
+
+export interface GitHubCommit {
+  sha: string
+  message: string
+  date: string
+  repoName: string
+  repoUrl: string
+  commitUrl: string
+  additions?: number
+  deletions?: number
+}
+
+export interface GitHubRepoInfo {
+  name: string
+  fullName: string
+  description: string
+  stars: number
+  forks: number
+  language: string
+  url: string
+  updatedAt: string
+}
+
+export async function fetchRecentCommits(
+  username: string, 
+  token?: string, 
+  limit: number = 10
+): Promise<GitHubCommit[]> {
+  if (!token) {
+    console.warn('No GitHub token provided for commits')
+    return []
+  }
+
+  // Query to get recent repositories with commits
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        repositories(
+          first: 10, 
+          orderBy: {field: PUSHED_AT, direction: DESC}, 
+          ownerAffiliations: OWNER,
+          privacy: PUBLIC
+        ) {
+          nodes {
+            name
+            url
+            defaultBranchRef {
+              target {
+                ... on Commit {
+                  history(first: 5) {
+                    edges {
+                      node {
+                        oid
+                        message
+                        committedDate
+                        additions
+                        deletions
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `
+
+  try {
+    const response = await fetch(GITHUB_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username }
+      }),
+      next: { revalidate: 300 } // Cache for 5 minutes
+    })
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (data.errors) {
+      console.error('GitHub API errors:', data.errors)
+      return []
+    }
+
+    const commits: GitHubCommit[] = []
+    const repos = data.data.user.repositories.nodes
+
+    repos.forEach((repo: any) => {
+      if (repo.defaultBranchRef?.target?.history?.edges) {
+        repo.defaultBranchRef.target.history.edges.forEach((edge: any) => {
+          const commit = edge.node
+          commits.push({
+            sha: commit.oid,
+            message: commit.message,
+            date: commit.committedDate,
+            repoName: repo.name,
+            repoUrl: repo.url,
+            commitUrl: commit.url,
+            additions: commit.additions,
+            deletions: commit.deletions
+          })
+        })
+      }
+    })
+
+    // Sort by date and limit
+    commits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    return commits.slice(0, limit)
+  } catch (error) {
+    console.error('Failed to fetch recent commits:', error)
+    return []
+  }
+}
+
+export async function fetchTopRepositories(
+  username: string, 
+  token?: string, 
+  limit: number = 10
+): Promise<GitHubRepoInfo[]> {
+  if (!token) {
+    console.warn('No GitHub token provided for repositories')
+    return []
+  }
+
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        repositories(
+          first: 50, 
+          orderBy: {field: STARGAZERS, direction: DESC}, 
+          ownerAffiliations: OWNER,
+          privacy: PUBLIC
+        ) {
+          nodes {
+            name
+            nameWithOwner
+            description
+            stargazerCount
+            forkCount
+            primaryLanguage {
+              name
+            }
+            url
+            updatedAt
+          }
+        }
+      }
+    }
+  `
+
+  try {
+    const response = await fetch(GITHUB_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username }
+      }),
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (data.errors) {
+      console.error('GitHub API errors:', data.errors)
+      return []
+    }
+
+    const repos: GitHubRepoInfo[] = data.data.user.repositories.nodes
+      .map((repo: any) => ({
+        name: repo.name,
+        fullName: repo.nameWithOwner,
+        description: repo.description || '',
+        stars: repo.stargazerCount,
+        forks: repo.forkCount,
+        language: repo.primaryLanguage?.name || 'Unknown',
+        url: repo.url,
+        updatedAt: repo.updatedAt
+      }))
+      .slice(0, limit)
+
+    return repos
+  } catch (error) {
+    console.error('Failed to fetch top repositories:', error)
+    return []
+  }
+}
+
+export async function fetchGitHubTotalStats(username: string, token?: string) {
+  if (!token) {
+    return null
+  }
+
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        repositories(ownerAffiliations: OWNER, privacy: PUBLIC) {
+          totalCount
+        }
+        contributionsCollection {
+          totalCommitContributions
+          totalPullRequestContributions
+          totalIssueContributions
+          totalRepositoryContributions
+        }
+      }
+    }
+  `
+
+  try {
+    const response = await fetch(GITHUB_API, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { username }
+      }),
+      next: { revalidate: 3600 } // Cache for 1 hour
+    })
+
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (data.errors) {
+      console.error('GitHub API errors:', data.errors)
+      return null
+    }
+
+    return {
+      totalRepos: data.data.user.repositories.totalCount,
+      totalCommits: data.data.user.contributionsCollection.totalCommitContributions,
+      totalPRs: data.data.user.contributionsCollection.totalPullRequestContributions,
+      totalIssues: data.data.user.contributionsCollection.totalIssueContributions,
+      totalReposCreated: data.data.user.contributionsCollection.totalRepositoryContributions
+    }
+  } catch (error) {
+    console.error('Failed to fetch GitHub total stats:', error)
+    return null
+  }
+}

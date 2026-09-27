@@ -13,6 +13,8 @@ import { AboutSection } from '@/components/AboutSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ProjectsSection } from '@/components/projects/ProjectsSection'
 import { TechStackSection } from '@/components/TechStackSection'
+import { BuildLogSection } from '@/components/BuildLogSection'
+import { TopRepositories } from '@/components/TopRepositories'
 import { LabSection } from '@/components/LabSection'
 import { TerminalNew } from '@/components/TerminalNew'
 import { Footer } from '@/components/Footer'
@@ -142,6 +144,8 @@ export default function Home() {
           <ExperienceSection />
           <ProjectsSection />
           <TechStackSection />
+          <BuildLogSection />
+          <TopRepositories />
           <LabSection />
           <Footer />
           <SettingsPanel />
