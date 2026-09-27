@@ -9,6 +9,7 @@ import { GlitchEffect } from '@/components/effects/GlitchEffect'
 import { Navigation } from '@/components/Navigation'
 import { CommandPalette } from '@/components/CommandPalette'
 import { Hero } from '@/components/Hero'
+import { SystemSection } from '@/components/SystemSection'
 import { AboutSection } from '@/components/AboutSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ProjectsSection } from '@/components/projects/ProjectsSection'
@@ -68,13 +69,10 @@ export default function Home() {
       return
     }
 
-    const sectionId = section === 'system' ? 'hero' : section
-    const element = document.getElementById(sectionId)
+    const element = document.getElementById(section)
     
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
-    } else if (section === 'system') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -140,6 +138,7 @@ export default function Home() {
             <Hero />
           </div>
           
+          <SystemSection />
           <AboutSection />
           <ExperienceSection />
           <ProjectsSection />

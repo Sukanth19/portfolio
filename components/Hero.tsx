@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { socials, emailUrl, resumePath } from '@/data/socials'
-import { SystemTelemetry } from './SystemTelemetry'
 
 export function Hero() {
   const [time, setTime] = useState(new Date())
@@ -143,24 +142,7 @@ export function Hero() {
                 </motion.div>
               ))}
             </div>
-
-            {/* System Telemetry */}
-            <div className="pt-6">
-              <SystemTelemetry />
-            </div>
           </div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            className="absolute bottom-12 left-1/2 -translate-x-1/2"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            <div className="text-xs font-mono text-gray-muted">
-              SCROLL TO EXPLORE
-              <div className="w-px h-12 bg-gradient-to-b from-gray-muted to-transparent mx-auto mt-2" />
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>
