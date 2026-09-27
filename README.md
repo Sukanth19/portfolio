@@ -17,6 +17,10 @@ This portfolio embodies my approach to development—learning through building u
 - **The Lab** - Experimental projects and technical explorations
 - **Tech Constellation** - Interactive technology stack visualization
 - **Live Terminal** - Functional terminal with custom commands
+- **Snake Game** - Playable Snake game accessible via terminal (`snake` command)
+- **Glitch Mode** - Cyberpunk glitch aesthetic toggle (`glitch` command)
+- **GitHub Activity Graph** - Interactive contribution heatmap with stats
+- **Code Metrics Dashboard** - Real-time developer statistics and analytics
 - **Easter Eggs** - Hidden interactions and features to discover
 - **Keyboard Navigation** - Full keyboard shortcut support
 - **Responsive Design** - Optimized for desktop and mobile
@@ -77,6 +81,9 @@ Type these commands in the interactive terminal:
 - `contact` - Get contact info
 - `neofetch` - System information
 - `whoami` - Who am I?
+- `snake` - Play Snake game 🎮
+- `glitch` - Toggle glitch mode ⚡
+- `metrics` - View developer metrics dashboard
 - `clear` - Clear terminal
 
 ## Project Structure

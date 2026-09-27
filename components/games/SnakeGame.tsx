@@ -389,7 +389,7 @@ export function SnakeGame({ onClose }: { onClose: () => void }) {
             <div className="text-gray-muted space-y-1">
               <div>• Eat the food (red)</div>
               <div>• Grow to length {WIN_LENGTH}</div>
-              <div>• Don't hit yourself</div>
+              <div>• Don&apos;t hit yourself</div>
               <div>• Reach max length to win!</div>
             </div>
           </div>

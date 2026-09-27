@@ -29,6 +29,7 @@ export function GitHubActivityGraph() {
 
   useEffect(() => {
     fetchGitHubData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchGitHubData = async () => {

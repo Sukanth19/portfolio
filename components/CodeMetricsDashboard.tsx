@@ -106,7 +106,8 @@ export function CodeMetricsDashboard() {
       }, 1000 / 60)
 
       return () => clearInterval(timer)
-    }, [value, duration, animateValues])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value, duration])
 
     return <span>{count.toLocaleString()}{suffix}</span>
   }
