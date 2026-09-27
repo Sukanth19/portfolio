@@ -132,79 +132,38 @@ export const projects: Project[] = [
     status: 'ACTIVE',
     visual: 'archive'
   },
+
   {
-    id: 'typing-tester',
-    title: 'Typing Tester',
-    tagline: 'Canvas-based typing game',
-    description: 'Interactive typing game built with vanilla JavaScript and Canvas API, featuring real-time WPM, accuracy tracking, and combo system.',
+    id: 'github-analyzer',
+    title: 'GitHub Code Analyzer',
+    tagline: 'Repository intelligence tool',
+    description: 'Experimental tool that retrieves and analyzes GitHub repositories to generate engineering insights about codebases.',
     technology: [
-      'JavaScript',
-      'Canvas API',
-      'HTML5',
-      'CSS3'
+      'Next.js',
+      'TypeScript',
+      'GitHub API',
+      'Python'
     ],
     features: [
-      'Real-time WPM calculation',
-      'Accuracy percentage tracking',
-      'Combo multiplier system',
-      'Reaction time measurement',
-      'Custom word lists',
-      'Visual feedback animations'
+      'GitHub repository retrieval',
+      'Codebase structure analysis',
+      'Engineering insight generation',
+      'Repository metadata extraction'
     ],
     challenges: [
-      'Smooth Canvas rendering at 60fps',
-      'Accurate timing and performance metrics',
-      'Responsive keyboard event handling',
-      'Building engaging visual feedback',
-      'Optimizing Canvas draw calls'
+      'Efficient repository data retrieval',
+      'Parsing diverse codebase structures',
+      'Generating meaningful insights from raw code',
+      'Handling rate limits and authentication',
+      'Building scalable analysis pipeline'
     ],
     learned: [
-      'Canvas API rendering techniques',
-      'Game loop architecture',
-      'Performance optimization strategies',
-      'Event-driven programming patterns',
-      'Real-time metrics calculation'
+      'GitHub API integration patterns',
+      'Repository analysis techniques',
+      'Data processing pipelines',
+      'Insight extraction strategies'
     ],
-    status: 'LIVE',
-    github: 'https://github.com/Sukanth19/typing-tester',
-    demo: 'https://sukanth19.github.io/typing-tester',
-    visual: 'canvas'
-  },
-  {
-    id: 'image-ascii',
-    title: 'Image to ASCII',
-    tagline: 'Image conversion utility',
-    description: 'CLI and web utility for converting images to ASCII art with adjustable character density, contrast, and output width.',
-    technology: [
-      'Python',
-      'Pillow',
-      'JavaScript',
-      'Canvas API'
-    ],
-    features: [
-      'Multiple character density levels',
-      'Adjustable contrast and brightness',
-      'Custom output width',
-      'Color to grayscale conversion',
-      'Export to text file',
-      'Browser-based live preview'
-    ],
-    challenges: [
-      'Optimizing image processing performance',
-      'Character mapping for best visual results',
-      'Handling various image formats',
-      'Building intuitive CLI interface',
-      'Browser-side image processing'
-    ],
-    learned: [
-      'Image processing fundamentals',
-      'CLI tool design patterns',
-      'Python Pillow library usage',
-      'Grayscale conversion algorithms',
-      'Browser File API and Canvas manipulation'
-    ],
-    status: 'LIVE',
-    github: 'https://github.com/Sukanth19/image-to-ascii',
+    status: 'BUILDING',
     visual: 'terminal'
   }
 ]
