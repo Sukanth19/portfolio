@@ -118,14 +118,15 @@ export function Hero() {
             {/* System status */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
               {[
-                { label: 'STATUS', value: 'ONLINE', color: 'lavender' },
-                { label: 'FOCUS', value: 'BUILDING', color: 'text-light' },
-                { label: 'AVAILABLE', value: 'YES', color: 'lavender' },
-                { label: 'EDITOR', value: 'NEOVIM', color: 'text-light' },
+                { label: 'STATUS', value: 'ONLINE', color: 'lavender', action: () => console.log('Status clicked') },
+                { label: 'FOCUS', value: 'BUILDING', color: 'text-light', action: () => console.log('Focus clicked') },
+                { label: 'AVAILABLE', value: 'YES', color: 'lavender', action: () => console.log('Available clicked') },
+                { label: 'EDITOR', value: 'NEOVIM', color: 'text-light', action: () => console.log('Editor clicked') },
               ].map((item) => (
-                <motion.div
+                <motion.button
                   key={item.label}
-                  className="border border-gray-muted/20 p-3 bg-void-light/30 cursor-pointer group"
+                  onClick={item.action}
+                  className="border border-gray-muted/20 p-3 bg-void-light/30 cursor-pointer group interactive"
                   whileHover={{ 
                     borderColor: 'rgba(184, 174, 216, 0.3)',
                     backgroundColor: 'rgba(18, 18, 22, 0.5)',
@@ -139,10 +140,22 @@ export function Hero() {
                   <div className={`text-sm font-mono text-${item.color} group-hover:text-lavender transition-colors`}>
                     {item.value}
                   </div>
-                </motion.div>
+                </motion.button>
               ))}
             </div>
           </div>
+
+          {/* Scroll indicator */}
+          <motion.div
+            className="absolute bottom-12 left-1/2 -translate-x-1/2"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
+            <div className="text-xs font-mono text-gray-muted">
+              SCROLL TO EXPLORE
+              <div className="w-px h-12 bg-gradient-to-b from-gray-muted to-transparent mx-auto mt-2" />
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

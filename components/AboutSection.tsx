@@ -156,41 +156,6 @@ export function AboutSection() {
               ))}
             </div>
           </motion.div>
-
-          {/* Environment */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-mono text-lavender">ENVIRONMENT</h3>
-              <SystemCoordinates />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <motion.div 
-                className="border border-gray-muted/20 p-4 cursor-pointer"
-                whileHover={{ borderColor: 'rgba(184, 174, 216, 0.3)', y: -2 }}
-              >
-                <div className="text-xs font-mono text-crimson mb-1">OS</div>
-                <div className="text-text-light">Linux</div>
-              </motion.div>
-              <motion.div 
-                className="border border-gray-muted/20 p-4 cursor-pointer"
-                whileHover={{ borderColor: 'rgba(184, 174, 216, 0.3)', y: -2 }}
-              >
-                <div className="text-xs font-mono text-crimson mb-1">EDITOR</div>
-                <div className="text-text-light">Neovim</div>
-              </motion.div>
-              <motion.div 
-                className="border border-gray-muted/20 p-4 cursor-pointer"
-                whileHover={{ borderColor: 'rgba(184, 174, 216, 0.3)', y: -2 }}
-              >
-                <div className="text-xs font-mono text-crimson mb-1">SHELL</div>
-                <div className="text-text-light">zsh</div>
-              </motion.div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>

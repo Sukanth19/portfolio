@@ -9,14 +9,12 @@ import { GlitchEffect } from '@/components/effects/GlitchEffect'
 import { Navigation } from '@/components/Navigation'
 import { CommandPalette } from '@/components/CommandPalette'
 import { Hero } from '@/components/Hero'
-import { SystemSection } from '@/components/SystemSection'
 import { AboutSection } from '@/components/AboutSection'
 import { ExperienceSection } from '@/components/ExperienceSection'
 import { ProjectsSection } from '@/components/projects/ProjectsSection'
 import { TechStackSection } from '@/components/TechStackSection'
 import { LabSection } from '@/components/LabSection'
-import { BuildLogSection } from '@/components/BuildLogSection'
-import { ArchiveSection } from '@/components/ArchiveSection'
+import { EnvironmentSection } from '@/components/EnvironmentSection'
 import { TerminalNew } from '@/components/TerminalNew'
 import { Footer } from '@/components/Footer'
 import { SettingsPanel } from '@/components/SettingsPanel'
@@ -69,10 +67,13 @@ export default function Home() {
       return
     }
 
-    const element = document.getElementById(section)
+    const sectionId = section === 'system' ? 'hero' : section
+    const element = document.getElementById(sectionId)
     
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
+    } else if (section === 'system') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
@@ -138,14 +139,12 @@ export default function Home() {
             <Hero />
           </div>
           
-          <SystemSection />
           <AboutSection />
           <ExperienceSection />
           <ProjectsSection />
           <TechStackSection />
-          <BuildLogSection />
           <LabSection />
-          <ArchiveSection />
+          <EnvironmentSection />
           <Footer />
           <SettingsPanel />
           <TerminalNew initialState="minimized" />
