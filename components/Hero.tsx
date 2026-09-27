@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { socials, emailUrl, resumePath } from '@/data/socials'
+import { SystemTelemetry } from './SystemTelemetry'
 
 export function Hero() {
   const [time, setTime] = useState(new Date())
@@ -141,6 +142,11 @@ export function Hero() {
                   </div>
                 </motion.div>
               ))}
+            </div>
+
+            {/* System Telemetry */}
+            <div className="pt-6">
+              <SystemTelemetry />
             </div>
           </div>
 
