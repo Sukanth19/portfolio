@@ -42,7 +42,7 @@ export function BootSequence({ onComplete }: BootSequenceProps) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 bg-void flex flex-col items-center justify-center font-mono"
+        className="boot-overlay fixed inset-0 z-50 bg-void flex flex-col items-center justify-center font-mono"
         initial={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}

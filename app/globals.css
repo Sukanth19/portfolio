@@ -25,6 +25,11 @@ body {
   cursor: none;
 }
 
+/* Returning visitors skip the boot overlay (flag set by inline script in layout) */
+html[data-booted] .boot-overlay {
+  display: none;
+}
+
 /* Hide default cursor */
 * {
   cursor: none !important;

@@ -45,7 +45,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`}>
+    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Hide the boot overlay before first paint for returning visitors */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('hasSeenBoot'))document.documentElement.dataset.booted=''}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         {children}
       </body>

@@ -28,13 +28,10 @@ export default function Home() {
   const [booted, setBooted] = useState(false)
   const [glitchActive, setGlitchActive] = useState(false)
   const [konamiToast, setKonamiToast] = useState(false)
-  // Visual effect systems read window/random values while rendering, so they mount client-side only
-  const [mounted, setMounted] = useState(false)
   const { commandPaletteOpen, setCommandPaletteOpen } = useKeyboard()
 
   useEffect(() => {
     // Check if user has seen boot sequence before
-    setMounted(true)
     const hasSeenBoot = localStorage.getItem('hasSeenBoot')
     if (hasSeenBoot) {
       setBooted(true)
@@ -59,6 +56,11 @@ export default function Home() {
       window.removeEventListener('keydown', handleEscape)
       window.removeEventListener('toggleGlitch', handleGlitchToggle)
     }
+  }, [booted])
+
+  // Keep the page from scrolling behind the boot overlay
+  useEffect(() => {
+    document.body.style.overflow = booted ? '' : 'hidden'
   }, [booted])
 
   const handleBootComplete = () => {
@@ -110,7 +112,8 @@ export default function Home() {
       </AnimatePresence>
 
       <main className="relative min-h-screen">
-        {mounted && (
+        {/* Effect systems start after boot so they don't compete with it (they also read window while rendering) */}
+        {booted && (
           <>
             <CursorSystem />
             <BackgroundSystem />
@@ -126,7 +129,8 @@ export default function Home() {
         />
 
         <div id="hero">
-          <Hero />
+          {/* Remount after boot so the intro animation plays once the overlay is gone */}
+          <Hero key={booted ? 'booted' : 'booting'} />
         </div>
         
         <AboutSection />
