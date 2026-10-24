@@ -57,12 +57,7 @@ export const experiences: Experience[] = [
     ],
     ai: {
       description: 'Python-based AI chatbot development',
-      language: 'Python',
-      purpose: '[To Be Updated]',
-      architecture: '[To Be Updated]',
-      components: ['[To Be Updated]'],
-      deployment: '[To Be Updated]',
-      contribution: '[To Be Updated]'
+      language: 'Python'
     },
     learning: [
       'Real-world backend development practices',

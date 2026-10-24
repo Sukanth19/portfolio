@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { fetchTopRepositories, fetchGitHubRepoStats, type GitHubRepoInfo } from '@/lib/github'
+import type { GitHubRepoInfo } from '@/lib/github'
 
 export function TopRepositories() {
   const [repos, setRepos] = useState<GitHubRepoInfo[]>([])
@@ -11,20 +11,10 @@ export function TopRepositories() {
 
   useEffect(() => {
     const loadRepos = async () => {
-      const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN
-      const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'Sukanth19'
-
-      if (!token) {
-        console.warn('No GitHub token found')
-        setIsLoading(false)
-        return
-      }
-
       try {
-        const [topRepos, repoStats] = await Promise.all([
-          fetchTopRepositories(username, token, 6),
-          fetchGitHubRepoStats(username, token)
-        ])
+        const res = await fetch('/api/github/repos')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const { repos: topRepos, stats: repoStats } = await res.json()
 
         setRepos(topRepos)
         setStats(repoStats)

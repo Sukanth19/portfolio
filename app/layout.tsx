@@ -13,6 +13,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://sukanth19.vercel.app'),
   title: 'Sukanth - Developer / Builder / Experimenter',
   description: 'Computer Science student who learns by building. Exploring systems, AI/ML, cybersecurity, game development, and more.',
   keywords: ['developer', 'portfolio', 'computer science', 'AI', 'ML', 'cybersecurity', 'game development'],
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://github.com/Sukanth19',
+    url: 'https://sukanth19.vercel.app',
     title: 'Sukanth - Developer Portfolio',
     description: 'Computer Science student who learns by building.',
     siteName: 'Sukanth Portfolio',

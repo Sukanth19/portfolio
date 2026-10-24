@@ -9,7 +9,7 @@ export const technologies: Technology[] = [
   // Languages
   { name: 'C', category: 'Languages', usedIn: ['Graphics Engine', 'Systems Programming'] },
   { name: 'C++', category: 'Languages', usedIn: ['Graphics Engine', 'Game Engine'] },
-  { name: 'Python', category: 'Languages', usedIn: ['SneakerNet', 'jamr.io', 'RAG/AI', 'Image to ASCII'], experience: ['Internship'] },
+  { name: 'Python', category: 'Languages', usedIn: ['SneakerNet', 'jamr.io', 'Eidothea', 'RAG/AI', 'Image to ASCII'], experience: ['Internship'] },
   { name: 'JavaScript', category: 'Languages', usedIn: ['Typing Tester', 'Image to ASCII'] },
   { name: 'TypeScript', category: 'Languages', usedIn: ['jamr.io', 'SneakerNet', 'Eidothea'] },
   { name: 'Java', category: 'Languages', usedIn: [] },
@@ -19,7 +19,7 @@ export const technologies: Technology[] = [
   // Web
   { name: 'React', category: 'Web', usedIn: ['jamr.io', 'SneakerNet', 'Eidothea'] },
   { name: 'Next.js', category: 'Web', usedIn: ['jamr.io', 'SneakerNet', 'Eidothea'] },
-  { name: 'FastAPI', category: 'Web', usedIn: ['jamr.io', 'SneakerNet'] },
+  { name: 'FastAPI', category: 'Web', usedIn: ['jamr.io', 'SneakerNet', 'Eidothea'] },
   { name: 'Flask', category: 'Web', usedIn: [] },
   { name: 'Laravel', category: 'Web', usedIn: [], experience: ['Internship'] },
   { name: 'PHP', category: 'Web', usedIn: [], experience: ['Internship'] },
@@ -28,13 +28,14 @@ export const technologies: Technology[] = [
 
   // Data/ML
   { name: 'NumPy', category: 'Data/ML', usedIn: ['jamr.io', 'ML Projects'] },
-  { name: 'Pandas', category: 'Data/ML', usedIn: ['SneakerNet', 'Data Analysis'] },
+  { name: 'Pandas', category: 'Data/ML', usedIn: ['SneakerNet', 'Eidothea', 'Data Analysis'] },
   { name: 'Matplotlib', category: 'Data/ML', usedIn: ['Data Visualization'] },
   { name: 'Seaborn', category: 'Data/ML', usedIn: ['Data Visualization'] },
   { name: 'scikit-learn', category: 'Data/ML', usedIn: ['jamr.io'] },
 
   // Databases
-  { name: 'PostgreSQL', category: 'Databases', usedIn: ['jamr.io', 'SneakerNet', 'Eidothea'] },
+  { name: 'PostgreSQL', category: 'Databases', usedIn: ['jamr.io', 'SneakerNet'] },
+  { name: 'SQLite', category: 'Databases', usedIn: ['Eidothea'] },
   { name: 'MongoDB', category: 'Databases', usedIn: [] },
   { name: 'Supabase', category: 'Databases', usedIn: [] },
   { name: 'Firebase', category: 'Databases', usedIn: [] },
@@ -42,6 +43,7 @@ export const technologies: Technology[] = [
 
   // Infrastructure
   { name: 'Linux', category: 'Infrastructure', usedIn: ['Home Lab', 'All Projects'], experience: ['Internship'] },
+  { name: 'Azure', category: 'Infrastructure', usedIn: ['Eidothea'] },
   { name: 'Ubuntu', category: 'Infrastructure', usedIn: [], experience: ['Internship'] },
   { name: 'AWS', category: 'Infrastructure', usedIn: [], experience: ['Internship'] },
   { name: 'EC2', category: 'Infrastructure', usedIn: [], experience: ['Internship'] },

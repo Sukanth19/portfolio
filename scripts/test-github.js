@@ -4,8 +4,8 @@
 require('dotenv').config({ path: '.env.local' })
 
 const GITHUB_API = 'https://api.github.com/graphql'
-const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN
-const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'Sukanth19'
+const token = process.env.GITHUB_TOKEN
+const username = process.env.GITHUB_USERNAME || 'Sukanth19'
 
 async function testGitHubConnection() {
   console.log('\n🔍 Testing GitHub Integration...\n')
@@ -13,8 +13,8 @@ async function testGitHubConnection() {
   if (!token) {
     console.error('❌ No GitHub token found!')
     console.log('📝 Create a .env.local file with:')
-    console.log('   NEXT_PUBLIC_GITHUB_TOKEN=your_token_here')
-    console.log('   NEXT_PUBLIC_GITHUB_USERNAME=your_username')
+    console.log('   GITHUB_TOKEN=your_token_here')
+    console.log('   GITHUB_USERNAME=your_username')
     process.exit(1)
   }
 

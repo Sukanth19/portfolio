@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react'
 import { socials, emailUrl, resumePath } from '@/data/socials'
 
 export function Hero() {
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState<Date | null>(null)
 
   useEffect(() => {
+    setTime(new Date())
     const timer = setInterval(() => setTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
@@ -33,7 +34,7 @@ export function Hero() {
                 <span className="text-gray-muted">$</span>
               </div>
               <div className="text-xs">
-                {time.toLocaleTimeString('en-US', { hour12: false })}
+                {time ? time.toLocaleTimeString('en-US', { hour12: false }) : '--:--:--'}
               </div>
             </div>
           </div>

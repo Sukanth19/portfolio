@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { buildLog, type BuildLogEntry } from '@/data/buildLog'
-import { fetchRecentCommits, fetchGitHubTotalStats, type GitHubCommit } from '@/lib/github'
+import type { GitHubCommit } from '@/lib/github'
 import { SystemCoordinates } from './ui/SystemCoordinates'
 import { SystemTimestamp } from './ui/SystemTimestamp'
 
@@ -41,28 +41,17 @@ export function BuildLogSection() {
 
   useEffect(() => {
     const loadGitHubData = async () => {
-      const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN
-      const username = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'Sukanth19'
-      
-      if (!token) {
-        console.warn('No GitHub token found, using static build log')
-        setIsLoading(false)
-        setUseGitHub(false)
-        return
-      }
-
       try {
-        const [recentCommits, stats] = await Promise.all([
-          fetchRecentCommits(username, token, 10),
-          fetchGitHubTotalStats(username, token)
-        ])
+        const res = await fetch('/api/github/build-log')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const { commits: recentCommits, totalStats: stats } = await res.json()
 
         if (recentCommits.length > 0) {
           setCommits(recentCommits)
         } else {
           setUseGitHub(false)
         }
-        
+
         setTotalStats(stats)
       } catch (error) {
         console.error('Failed to load GitHub data:', error)

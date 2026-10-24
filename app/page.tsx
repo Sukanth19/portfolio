@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { BootSequence } from '@/components/BootSequence'
 import { CursorSystem } from '@/components/interactive/CursorSystem'
 import { BackgroundSystem } from '@/components/interactive/BackgroundSystem'
@@ -23,16 +24,19 @@ import { useKeyboard } from '@/hooks/useKeyboard'
 import { useKonamiCode } from '@/hooks/useKonamiCode'
 
 export default function Home() {
+  // Content always renders (and is server-rendered); the boot sequence is an overlay on top
   const [booted, setBooted] = useState(false)
-  const [showBootSequence, setShowBootSequence] = useState(true)
   const [glitchActive, setGlitchActive] = useState(false)
+  const [konamiToast, setKonamiToast] = useState(false)
+  // Visual effect systems read window/random values while rendering, so they mount client-side only
+  const [mounted, setMounted] = useState(false)
   const { commandPaletteOpen, setCommandPaletteOpen } = useKeyboard()
 
   useEffect(() => {
     // Check if user has seen boot sequence before
+    setMounted(true)
     const hasSeenBoot = localStorage.getItem('hasSeenBoot')
     if (hasSeenBoot) {
-      setShowBootSequence(false)
       setBooted(true)
     }
 
@@ -82,76 +86,60 @@ export default function Home() {
   useKonamiCode(() => {
     // Enable glitch mode and show snake game
     setGlitchActive(true)
-    // Show a fun notification
-    const notification = document.createElement('div')
-    notification.innerHTML = '🎮 KONAMI CODE ACTIVATED! Unlocking retro mode...'
-    notification.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(184, 174, 216, 0.95);
-      color: #0a0a0d;
-      padding: 20px 40px;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: bold;
-      z-index: 10000;
-      box-shadow: 0 0 30px rgba(184, 174, 216, 0.8);
-      animation: fadeInOut 3s ease-in-out;
-    `
-    document.body.appendChild(notification)
-    
-    setTimeout(() => {
-      notification.remove()
-    }, 3000)
-
-    // Add CSS animation
-    const style = document.createElement('style')
-    style.textContent = `
-      @keyframes fadeInOut {
-        0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-      }
-    `
-    document.head.appendChild(style)
+    setKonamiToast(true)
+    setTimeout(() => setKonamiToast(false), 3000)
   })
 
   return (
     <>
-      {showBootSequence && !booted && (
+      {!booted && (
         <BootSequence onComplete={handleBootComplete} />
       )}
 
-      {booted && (
-        <main className="relative min-h-screen">
-          <CursorSystem />
-          <BackgroundSystem />
-          <EnvironmentSystem />
-          <GlitchEffect isActive={glitchActive} />
-          <Navigation onNavigate={handleNavigate} />
-          <CommandPalette
-            isOpen={commandPaletteOpen}
-            onClose={() => setCommandPaletteOpen(false)}
-            onNavigate={handleNavigate}
-          />
+      <AnimatePresence>
+        {konamiToast && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+            animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+            exit={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
+            className="fixed top-1/2 left-1/2 z-[10000] rounded-lg bg-lavender/95 px-10 py-5 font-mono font-bold text-void shadow-[0_0_30px_rgba(184,174,216,0.8)]"
+          >
+            🎮 KONAMI CODE ACTIVATED! Unlocking retro mode...
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div id="hero">
-            <Hero />
-          </div>
-          
-          <AboutSection />
-          <ExperienceSection />
-          <ProjectsSection />
-          <TechStackSection />
-          <LabSection />
-          <BuildLogSection />
-          <TopRepositories />
-          <Footer />
-          <SettingsPanel />
-          <TerminalNew initialState="minimized" />
-        </main>
-      )}
+      <main className="relative min-h-screen">
+        {mounted && (
+          <>
+            <CursorSystem />
+            <BackgroundSystem />
+            <EnvironmentSystem />
+            <GlitchEffect isActive={glitchActive} />
+          </>
+        )}
+        <Navigation onNavigate={handleNavigate} />
+        <CommandPalette
+          isOpen={commandPaletteOpen}
+          onClose={() => setCommandPaletteOpen(false)}
+          onNavigate={handleNavigate}
+        />
+
+        <div id="hero">
+          <Hero />
+        </div>
+        
+        <AboutSection />
+        <ExperienceSection />
+        <ProjectsSection />
+        <TechStackSection />
+        <LabSection />
+        <BuildLogSection />
+        <TopRepositories />
+        <Footer />
+        <SettingsPanel />
+        <TerminalNew initialState="minimized" />
+      </main>
     </>
   )
 }

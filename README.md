@@ -27,7 +27,7 @@ Personal portfolio website with live GitHub integration.
 ### 1. Clone & Install
 ```bash
 git clone <your-repo-url>
-cd cope
+cd portfolio
 npm install
 ```
 
@@ -36,14 +36,14 @@ npm install
 Create a `.env.local` file:
 
 ```bash
-copy .env.example .env.local
+cp .env.example .env.local
 ```
 
 Add your GitHub credentials:
 
 ```env
-NEXT_PUBLIC_GITHUB_TOKEN=your_github_token_here
-NEXT_PUBLIC_GITHUB_USERNAME=Sukanth19
+GITHUB_TOKEN=your_github_token_here
+GITHUB_USERNAME=Sukanth19
 ```
 
 **Get your token**: https://github.com/settings/tokens
@@ -61,11 +61,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
-## 📚 Documentation
-
-- **[QUICKSTART.md](QUICKSTART.md)** - Get GitHub integration working in 3 minutes
-- **[GITHUB_INTEGRATION.md](GITHUB_INTEGRATION.md)** - Complete setup guide
-- **[GITHUB_FEATURES_SUMMARY.md](GITHUB_FEATURES_SUMMARY.md)** - Technical details
+GitHub data is fetched server-side through `app/api/github/*` routes, so the token is never shipped to the browser.
 
 ## 🔧 Available Scripts
 
@@ -113,8 +109,8 @@ Showcases your most starred repositories with descriptions, stats, and direct li
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `NEXT_PUBLIC_GITHUB_TOKEN` | GitHub Personal Access Token | Optional* |
-| `NEXT_PUBLIC_GITHUB_USERNAME` | Your GitHub username | Optional* |
+| `GITHUB_TOKEN` | GitHub Personal Access Token | Optional* |
+| `GITHUB_USERNAME` | Your GitHub username | Optional* |
 | `NEXT_PUBLIC_SITE_URL` | Your deployed site URL | No |
 
 \* *Required for live GitHub integration. Site works without it using static data.*
@@ -130,7 +126,7 @@ vercel --prod
 
 **Important**: Add your environment variables in Vercel dashboard:
 1. Go to Project Settings → Environment Variables
-2. Add `NEXT_PUBLIC_GITHUB_TOKEN` and `NEXT_PUBLIC_GITHUB_USERNAME`
+2. Add `GITHUB_TOKEN` and `GITHUB_USERNAME`
 3. Redeploy
 
 ## 🤝 Contributing
