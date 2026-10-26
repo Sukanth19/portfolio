@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, MotionConfig, motion, useScroll, useSpring } from 'framer-motion'
 import { BootSequence } from '@/components/BootSequence'
 import { CursorSystem } from '@/components/interactive/CursorSystem'
 import { BackgroundSystem } from '@/components/interactive/BackgroundSystem'
@@ -29,6 +29,8 @@ export default function Home() {
   const [glitchActive, setGlitchActive] = useState(false)
   const [konamiToast, setKonamiToast] = useState(false)
   const { commandPaletteOpen, setCommandPaletteOpen } = useKeyboard()
+  const { scrollYProgress } = useScroll()
+  const scrollProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
 
   useEffect(() => {
     // Check if user has seen boot sequence before
@@ -93,7 +95,8 @@ export default function Home() {
   })
 
   return (
-    <>
+    // One easing curve for every animation that doesn't set its own; honours prefers-reduced-motion
+    <MotionConfig transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} reducedMotion="user">
       {!booted && (
         <BootSequence onComplete={handleBootComplete} />
       )}
@@ -110,6 +113,12 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Scroll progress */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-crimson via-lavender to-purple-deep z-[60]"
+        style={{ scaleX: scrollProgress }}
+      />
 
       <main className="relative min-h-screen">
         {/* Effect systems start after boot so they don't compete with it (they also read window while rendering) */}
@@ -144,6 +153,6 @@ export default function Home() {
         <SettingsPanel />
         <TerminalNew initialState="minimized" />
       </main>
-    </>
+    </MotionConfig>
   )
 }

@@ -29,7 +29,7 @@ export function AboutSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-80px' }}
           className="mb-16"
         >
           <div className="flex items-center justify-between mb-4">
@@ -62,7 +62,7 @@ export function AboutSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-80px' }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             <div className="space-y-3 font-mono text-sm">
@@ -112,7 +112,7 @@ export function AboutSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-80px' }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-mono text-lavender">INTERESTS</h3>
@@ -136,7 +136,7 @@ export function AboutSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-80px' }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-mono text-lavender">PHILOSOPHY</h3>

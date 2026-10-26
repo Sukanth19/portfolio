@@ -1,145 +1,142 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { useCursor } from '@/hooks/useCursor'
+import { motion, useMotionValue } from 'framer-motion'
 import { useInteractionSettings } from '@/hooks/useInteractionSettings'
 import { useState, useEffect, useRef } from 'react'
 
 interface TrailPoint {
   x: number
   y: number
-  timestamp: number
+  time: number
+}
+
+const TRAIL_LIFETIME = 160 // ms a trail point stays visible
+const TRAIL_WIDTH = 4
+
+function isInteractive(target: HTMLElement) {
+  return Boolean(
+    target.closest('a, button, [role="button"], .interactive')
+  )
 }
 
 export function CursorSystem() {
-  const cursor = useCursor()
   const { settings } = useInteractionSettings()
-  const [trail, setTrail] = useState<TrailPoint[]>([])
-  const lastPos = useRef({ x: 0, y: 0 })
+  const [enabled, setEnabled] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [isHovering, setIsHovering] = useState(false)
+
+  // Position lives in motion values so moving the mouse never re-renders React
+  const x = useMotionValue(-100)
+  const y = useMotionValue(-100)
+
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const trail = useRef<TrailPoint[]>([])
+  const frame = useRef<number>()
+  const trailEnabled = useRef(settings.cursorTrail)
+  trailEnabled.current = settings.cursorTrail
+
+  // Only take over the cursor on devices with a precise pointer (not touch screens)
+  useEffect(() => {
+    setEnabled(window.matchMedia('(pointer: fine)').matches)
+  }, [])
 
   useEffect(() => {
-    if (!settings.cursorTrail) {
-      setTrail([])
-      return
+    if (!enabled) return
+
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+
+    const resize = () => {
+      if (!canvas || !ctx) return
+      const dpr = window.devicePixelRatio || 1
+      canvas.width = window.innerWidth * dpr
+      canvas.height = window.innerHeight * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    const now = Date.now()
-    const moved = cursor.x !== lastPos.current.x || cursor.y !== lastPos.current.y
+    const draw = () => {
+      frame.current = undefined
+      if (!canvas || !ctx) return
 
-    if (moved) {
-      lastPos.current = { x: cursor.x, y: cursor.y }
-      
-      setTrail(prev => {
-        const newTrail = [
-          { x: cursor.x, y: cursor.y, timestamp: now },
-          ...prev.slice(0, 10)
-        ]
-        return newTrail
-      })
+      const now = performance.now()
+      trail.current = trail.current.filter(p => now - p.time < TRAIL_LIFETIME)
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+
+      const points = trail.current
+      if (points.length > 1) {
+        ctx.lineCap = 'round'
+        ctx.shadowColor = 'rgba(184, 174, 216, 0.8)'
+        ctx.shadowBlur = 8
+        // Newest point first: segments taper and fade towards the tail
+        for (let i = 0; i < points.length - 1; i++) {
+          const life = 1 - (now - points[i].time) / TRAIL_LIFETIME
+          const progress = i / (points.length - 1)
+          ctx.strokeStyle = `rgba(184, 174, 216, ${0.8 * life * (1 - progress)})`
+          ctx.lineWidth = TRAIL_WIDTH * life * (1 - progress) + 0.5
+          ctx.beginPath()
+          ctx.moveTo(points[i].x, points[i].y)
+          ctx.lineTo(points[i + 1].x, points[i + 1].y)
+          ctx.stroke()
+        }
+      }
+
+      // Keep animating only while there is a trail to fade out
+      if (points.length > 0) frame.current = requestAnimationFrame(draw)
     }
 
-    const clearOld = () => {
-      setTrail(prev => prev.filter(p => now - p.timestamp < 180))
+    const handleMove = (e: MouseEvent) => {
+      x.set(e.clientX)
+      y.set(e.clientY)
+      setVisible(true)
+
+      if (trailEnabled.current) {
+        trail.current.unshift({ x: e.clientX, y: e.clientY, time: performance.now() })
+        if (!frame.current) frame.current = requestAnimationFrame(draw)
+      }
     }
-    const timeout = setTimeout(clearOld, 50)
 
-    return () => clearTimeout(timeout)
-  }, [cursor.x, cursor.y, settings.cursorTrail])
+    const handleOver = (e: MouseEvent) => {
+      setIsHovering(isInteractive(e.target as HTMLElement))
+    }
 
-  useEffect(() => {
-    const idleTimer = setTimeout(() => {
-      setTrail([])
-    }, 120)
-    return () => clearTimeout(idleTimer)
-  }, [trail])
+    const handleLeave = () => setVisible(false)
+
+    resize()
+    window.addEventListener('resize', resize)
+    window.addEventListener('mousemove', handleMove, { passive: true })
+    document.addEventListener('mouseover', handleOver, { passive: true })
+    document.documentElement.addEventListener('mouseleave', handleLeave)
+
+    return () => {
+      if (frame.current) cancelAnimationFrame(frame.current)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', handleMove)
+      document.removeEventListener('mouseover', handleOver)
+      document.documentElement.removeEventListener('mouseleave', handleLeave)
+    }
+  }, [enabled, x, y])
+
+  if (!enabled) return null
 
   return (
     <>
-      {/* Shooting star trail - tapered streak */}
-      {settings.cursorTrail && trail.length > 1 && (
-        <svg
-          className="fixed top-0 left-0 w-full h-full pointer-events-none z-[9998]"
-        >
-          <defs>
-            {/* Gradient that fades out */}
-            <linearGradient id="fadeGradient" gradientUnits="userSpaceOnUse"
-              x1={trail[0].x} y1={trail[0].y}
-              x2={trail[trail.length - 1].x} y2={trail[trail.length - 1].y}>
-              <stop offset="0%" stopColor="rgba(184, 174, 216, 0.9)" />
-              <stop offset="50%" stopColor="rgba(184, 174, 216, 0.4)" />
-              <stop offset="100%" stopColor="rgba(184, 174, 216, 0)" />
-            </linearGradient>
-          </defs>
-          
-          {/* Draw tapered line that gets thinner */}
-          {trail.slice(0, -1).map((point, i) => {
-            const nextPoint = trail[i + 1]
-            const progress = i / (trail.length - 1)
-            const width = 4 * (1 - progress) // Gets thinner towards the tail
-            const opacity = 1 - progress // Fades out
-            
-            return (
-              <motion.line
-                key={`${point.timestamp}-${i}`}
-                x1={point.x}
-                y1={point.y}
-                x2={nextPoint.x}
-                y2={nextPoint.y}
-                stroke={`rgba(184, 174, 216, ${opacity * 0.8})`}
-                strokeWidth={width}
-                strokeLinecap="round"
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
-                transition={{ duration: 0.15 }}
-              />
-            )
-          })}
-          
-          {/* Glow layer */}
-          {trail.slice(0, -1).map((point, i) => {
-            const nextPoint = trail[i + 1]
-            const progress = i / (trail.length - 1)
-            const width = 6 * (1 - progress)
-            const opacity = (1 - progress) * 0.4
-            
-            return (
-              <motion.line
-                key={`glow-${point.timestamp}-${i}`}
-                x1={point.x}
-                y1={point.y}
-                x2={nextPoint.x}
-                y2={nextPoint.y}
-                stroke={`rgba(184, 174, 216, ${opacity})`}
-                strokeWidth={width}
-                strokeLinecap="round"
-                style={{ filter: 'blur(2px)' }}
-                initial={{ opacity: 1 }}
-                animate={{ opacity: 0 }}
-                transition={{ duration: 0.12 }}
-              />
-            )
-          })}
-        </svg>
-      )}
+      {/* Shooting star trail */}
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 w-full h-full pointer-events-none z-[9998]"
+      />
 
       {/* Main cursor dot - the "head" of the shooting star */}
       <motion.div
-        className="fixed pointer-events-none z-[9999]"
-        style={{
-          x: cursor.x - 6,
-          y: cursor.y - 6,
-        }}
+        className="fixed top-0 left-0 pointer-events-none z-[9999]"
+        style={{ x, y, translateX: '-50%', translateY: '-50%' }}
+        animate={{ opacity: visible ? 1 : 0 }}
+        transition={{ duration: 0.2 }}
       >
         <motion.div
-          animate={{
-            scale: cursor.isHovering ? 1.4 : 1,
-          }}
-          transition={{
-            type: 'spring',
-            stiffness: 2000,
-            damping: 40,
-            mass: 0.1,
-          }}
+          className="relative"
+          animate={{ scale: isHovering ? 1.8 : 1 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 28, mass: 0.5 }}
         >
           {/* Bright core */}
           <div className="w-3 h-3 bg-lavender rounded-full shadow-[0_0_12px_rgba(184,174,216,1)]" />

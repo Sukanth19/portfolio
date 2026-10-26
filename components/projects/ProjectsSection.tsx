@@ -21,7 +21,7 @@ export function ProjectsSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-80px' }}
           className="mb-16"
         >
           <div className="flex items-center justify-between mb-4">
@@ -58,8 +58,8 @@ export function ProjectsSection() {
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 6) * 0.07 }}
             >
               <ProjectCard
                 project={project}

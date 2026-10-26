@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useInteractionSettings } from '@/hooks/useInteractionSettings'
 
 interface EnvElement {
@@ -60,31 +60,38 @@ function generateElements(count: number): EnvElement[] {
 
 export function EnvironmentSystem() {
   const { settings } = useInteractionSettings()
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  
+  const glowRefs = useRef<(HTMLDivElement | null)[]>([])
+
   // Memoize elements generation
   const elements = useMemo(() => {
     return settings.motionEffects ? generateElements(20) : []
   }, [settings.motionEffects])
 
-  // Throttle mouse movement tracking for better performance
+  // Brighten elements near the cursor by writing styles directly, so the
+  // floating animations below never restart or re-render on mouse move
   useEffect(() => {
-    if (!settings.motionEffects) return
+    if (elements.length === 0) return
 
-    let rafId: number
-    let lastUpdate = 0
-    const throttleMs = 50 // Update every 50ms max
+    let rafId = 0
+    let mouseX = -1000
+    let mouseY = -1000
+
+    const update = () => {
+      rafId = 0
+      elements.forEach((el, i) => {
+        const node = glowRefs.current[i]
+        if (!node) return
+        const dx = mouseX - (window.innerWidth * el.x) / 100
+        const dy = mouseY - (window.innerHeight * el.y) / 100
+        const proximity = Math.max(0, 1 - Math.sqrt(dx * dx + dy * dy) / 300)
+        node.style.opacity = String(0.5 + proximity * 0.5)
+      })
+    }
 
     const handleMouseMove = (e: MouseEvent) => {
-      const now = Date.now()
-      if (now - lastUpdate < throttleMs) return
-      
-      lastUpdate = now
-      
-      if (rafId) cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(() => {
-        setMousePos({ x: e.clientX, y: e.clientY })
-      })
+      mouseX = e.clientX
+      mouseY = e.clientY
+      if (!rafId) rafId = requestAnimationFrame(update)
     }
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true })
@@ -92,7 +99,7 @@ export function EnvironmentSystem() {
       window.removeEventListener('mousemove', handleMouseMove)
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [settings.motionEffects])
+  }, [elements])
 
   if (!settings.motionEffects || elements.length === 0) {
     return null
@@ -100,28 +107,22 @@ export function EnvironmentSystem() {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-[5]">
-      {elements.map((el, index) => {
-        const distanceToMouse = Math.sqrt(
-          Math.pow(mousePos.x - (window.innerWidth * el.x / 100), 2) +
-          Math.pow(mousePos.y - (window.innerHeight * el.y / 100), 2)
-        )
-        const proximity = Math.max(0, 1 - distanceToMouse / 300)
-
-        return (
+      {elements.map((el, index) => (
+        <div
+          key={el.id}
+          ref={node => { glowRefs.current[index] = node }}
+          className="absolute transition-opacity duration-500 ease-out"
+          style={{ left: `${el.x}%`, top: `${el.y}%`, opacity: 0.5 }}
+        >
           <motion.div
-            key={el.id}
-            className={`absolute font-mono ${
+            className={`font-mono will-change-transform ${
               el.size === 'sm' ? 'text-[8px]' : 'text-[10px]'
             } ${
               el.type === 'creature' ? 'text-lavender/20' : 'text-gray-muted/10'
             }`}
-            initial={{ 
-              left: `${el.x}%`, 
-              top: `${el.y}%`,
-              opacity: 0 
-            }}
-            animate={{ 
-              opacity: [0.05 + proximity * 0.1, 0.15 + proximity * 0.15, 0.05 + proximity * 0.1],
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: [0.1, 0.3, 0.1],
               y: el.type === 'creature' ? [0, -30, 0] : [0, -20, 0],
               x: el.type === 'creature' ? [0, 10, 0] : 0,
             }}
@@ -134,8 +135,8 @@ export function EnvironmentSystem() {
           >
             {el.content}
           </motion.div>
-        )
-      })}
+        </div>
+      ))}
 
       {/* Additional scanlines */}
       <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-lavender/5 to-transparent" />

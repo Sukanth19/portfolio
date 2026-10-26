@@ -47,7 +47,7 @@ export function TopRepositories() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-80px' }}
           className="mb-8"
         >
           <div className="flex items-center gap-4 mb-2">
@@ -79,8 +79,8 @@ export function TopRepositories() {
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 6) * 0.07 }}
               whileHover={{ y: -4 }}
               className="border border-gray-muted/20 bg-void-light/30 p-4 group hover:border-crimson/40 transition-all"
             >

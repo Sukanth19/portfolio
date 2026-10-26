@@ -18,6 +18,8 @@ const DEFAULT_SETTINGS: InteractionSettings = {
   parallax: true,
 }
 
+const SETTINGS_EVENT = 'interactionSettingsChange'
+
 const SENSITIVITY_CONFIG = {
   precise: { stiffness: 150, damping: 25 },
   balanced: { stiffness: 300, damping: 22 },
@@ -47,14 +49,23 @@ export function useInteractionSettings() {
       setPrefersReducedMotion(e.matches)
     }
 
+    // Every component has its own copy of the settings; keep them in sync
+    const handleSettingsChange = (e: Event) => {
+      setSettings((e as CustomEvent<InteractionSettings>).detail)
+    }
+
     mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
+    window.addEventListener(SETTINGS_EVENT, handleSettingsChange)
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange)
+      window.removeEventListener(SETTINGS_EVENT, handleSettingsChange)
+    }
   }, [])
 
   const updateSettings = (newSettings: Partial<InteractionSettings>) => {
     const updated = { ...settings, ...newSettings }
-    setSettings(updated)
     localStorage.setItem('interactionSettings', JSON.stringify(updated))
+    window.dispatchEvent(new CustomEvent(SETTINGS_EVENT, { detail: updated }))
   }
 
   const getCursorConfig = () => {

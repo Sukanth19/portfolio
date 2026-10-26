@@ -273,6 +273,18 @@ export interface GitHubRepoInfo {
   updatedAt: string
 }
 
+// Newest first, with at most `perRepo` commits from any one repo so the log shows
+// activity across projects instead of a single busy repo
+function pickRecentCommits(commits: GitHubCommit[], limit: number, perRepo: number = 3) {
+  const sorted = [...commits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const counts: Record<string, number> = {}
+  const picked = sorted.filter(commit => {
+    counts[commit.repoName] = (counts[commit.repoName] || 0) + 1
+    return counts[commit.repoName] <= perRepo
+  })
+  return picked.slice(0, limit)
+}
+
 export async function fetchRecentCommits(
   username: string, 
   token?: string, 
@@ -291,7 +303,8 @@ export async function fetchRecentCommits(
           first: 10, 
           orderBy: {field: PUSHED_AT, direction: DESC}, 
           ownerAffiliations: OWNER,
-          privacy: PUBLIC
+          privacy: PUBLIC,
+          isFork: false
         ) {
           nodes {
             name
@@ -299,7 +312,7 @@ export async function fetchRecentCommits(
             defaultBranchRef {
               target {
                 ... on Commit {
-                  history(first: 5) {
+                  history(first: 10) {
                     edges {
                       node {
                         oid
@@ -308,6 +321,11 @@ export async function fetchRecentCommits(
                         additions
                         deletions
                         url
+                        author {
+                          user {
+                            login
+                          }
+                        }
                       }
                     }
                   }
@@ -352,6 +370,9 @@ export async function fetchRecentCommits(
       if (repo.defaultBranchRef?.target?.history?.edges) {
         repo.defaultBranchRef.target.history.edges.forEach((edge: any) => {
           const commit = edge.node
+          // Skip commits by other people (e.g. collaborators, template history)
+          const login = commit.author?.user?.login
+          if (login && login.toLowerCase() !== username.toLowerCase()) return
           commits.push({
             sha: commit.oid,
             message: commit.message,
@@ -366,9 +387,7 @@ export async function fetchRecentCommits(
       }
     })
 
-    // Sort by date and limit
-    commits.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    return commits.slice(0, limit)
+    return pickRecentCommits(commits, limit)
   } catch (error) {
     console.error('Failed to fetch recent commits:', error)
     return []
@@ -390,9 +409,10 @@ export async function fetchTopRepositories(
       user(login: $username) {
         repositories(
           first: 50, 
-          orderBy: {field: STARGAZERS, direction: DESC}, 
+          orderBy: {field: STARGAZERS, direction: DESC},
           ownerAffiliations: OWNER,
-          privacy: PUBLIC
+          privacy: PUBLIC,
+          isFork: false
         ) {
           nodes {
             name
@@ -512,5 +532,106 @@ export async function fetchGitHubTotalStats(username: string, token?: string) {
   } catch (error) {
     console.error('Failed to fetch GitHub total stats:', error)
     return null
+  }
+}
+
+// Token-less fallbacks using the public REST API (60 req/hour per IP, so results are cached)
+const GITHUB_REST = 'https://api.github.com'
+const REST_HEADERS = {
+  'Accept': 'application/vnd.github+json',
+  'User-Agent': 'sukanth-portfolio',
+}
+
+export async function fetchRecentCommitsPublic(
+  username: string,
+  limit: number = 10
+): Promise<GitHubCommit[]> {
+  try {
+    const reposRes = await fetch(
+      `${GITHUB_REST}/users/${username}/repos?type=owner&sort=pushed&per_page=15`,
+      { headers: REST_HEADERS, next: { revalidate: 600 } }
+    )
+    if (!reposRes.ok) throw new Error(`GitHub API error: ${reposRes.status}`)
+
+    const repos = (await reposRes.json())
+      .filter((repo: any) => !repo.fork && repo.size > 0)
+      .slice(0, 6)
+
+    const perRepo = await Promise.all(
+      repos.map(async (repo: any): Promise<GitHubCommit[]> => {
+        const res = await fetch(
+          `${GITHUB_REST}/repos/${repo.full_name}/commits?author=${username}&per_page=5`,
+          { headers: REST_HEADERS, next: { revalidate: 600 } }
+        )
+        if (!res.ok) return []
+
+        return (await res.json()).map((item: any) => ({
+          sha: item.sha,
+          message: item.commit.message,
+          date: item.commit.author?.date || item.commit.committer?.date,
+          repoName: repo.name,
+          repoUrl: repo.html_url,
+          commitUrl: item.html_url,
+        }))
+      })
+    )
+
+    return pickRecentCommits(perRepo.flat(), limit)
+  } catch (error) {
+    console.error('Failed to fetch public commits:', error)
+    return []
+  }
+}
+
+export async function fetchGitHubTotalStatsPublic(username: string) {
+  try {
+    const res = await fetch(`${GITHUB_REST}/users/${username}`, {
+      headers: REST_HEADERS,
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
+
+    const user = await res.json()
+    return { totalRepos: user.public_repos as number, totalCommits: null }
+  } catch (error) {
+    console.error('Failed to fetch public GitHub stats:', error)
+    return null
+  }
+}
+
+export async function fetchTopRepositoriesPublic(username: string, limit: number = 6) {
+  try {
+    const res = await fetch(
+      `${GITHUB_REST}/users/${username}/repos?type=owner&per_page=100`,
+      { headers: REST_HEADERS, next: { revalidate: 3600 } }
+    )
+    if (!res.ok) throw new Error(`GitHub API error: ${res.status}`)
+
+    const all = (await res.json()).filter((repo: any) => !repo.fork)
+
+    const repos: GitHubRepoInfo[] = all
+      .sort((a: any, b: any) => b.stargazers_count - a.stargazers_count)
+      .slice(0, limit)
+      .map((repo: any) => ({
+        name: repo.name,
+        fullName: repo.full_name,
+        description: repo.description || '',
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        language: repo.language || 'Unknown',
+        url: repo.html_url,
+        updatedAt: repo.updated_at
+      }))
+
+    const stats = {
+      totalRepos: all.length,
+      totalStars: all.reduce((sum: number, repo: any) => sum + repo.stargazers_count, 0),
+      totalForks: all.reduce((sum: number, repo: any) => sum + repo.forks_count, 0),
+    }
+
+    return { repos, stats }
+  } catch (error) {
+    console.error('Failed to fetch public repositories:', error)
+    return { repos: [], stats: null }
   }
 }

@@ -10,7 +10,7 @@ export function Footer() {
     <motion.footer
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: '-80px' }}
       className="py-12 px-8 border-t border-gray-muted/20"
     >
       <div className="max-w-5xl mx-auto">

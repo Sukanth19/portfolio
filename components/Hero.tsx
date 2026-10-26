@@ -4,6 +4,18 @@ import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { socials, emailUrl, resumePath } from '@/data/socials'
 
+const EASE = [0.22, 1, 0.36, 1] as const
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.8, ease: EASE } },
+}
+
 export function Hero() {
   const [time, setTime] = useState<Date | null>(null)
 
@@ -19,13 +31,13 @@ export function Hero() {
     <section className="min-h-screen flex items-center justify-center relative px-8">
       <div className="max-w-5xl w-full">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
+          initial="hidden"
+          animate="show"
+          variants={container}
           className="space-y-8"
         >
           {/* Terminal header */}
-          <div className="font-mono text-sm text-gray-muted border-b border-gray-muted/20 pb-4">
+          <motion.div variants={item} className="font-mono text-sm text-gray-muted border-b border-gray-muted/20 pb-4">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-lavender">sukanth@system</span>
@@ -37,11 +49,11 @@ export function Hero() {
                 {time ? time.toLocaleTimeString('en-US', { hour12: false }) : '--:--:--'}
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main content */}
           <div className="space-y-6">
-            <div>
+            <motion.div variants={item}>
               <h1 className="text-6xl md:text-7xl font-bold text-text-light mb-2">
                 SUKANTH
               </h1>
@@ -55,16 +67,16 @@ export function Hero() {
                   <span>Developer / Builder / Experimenter</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="font-mono text-sm text-gray-muted max-w-2xl space-y-2 border-l-2 border-purple-deep pl-4">
+            <motion.div variants={item} className="font-mono text-sm text-gray-muted max-w-2xl space-y-2 border-l-2 border-purple-deep pl-4">
               <p className="text-text-light/80">
                 building systems • breaking abstractions • figuring out how things work
               </p>
-            </div>
+            </motion.div>
 
             {/* Action buttons */}
-            <div className="flex flex-wrap gap-4 pt-4">
+            <motion.div variants={item} className="flex flex-wrap gap-4 pt-4">
               <motion.a
                 href={resumePath}
                 download
@@ -84,11 +96,11 @@ export function Hero() {
                 <span>✉</span>
                 <span>MAIL ME</span>
               </motion.a>
-            </div>
+            </motion.div>
 
             {/* Quick Links */}
             {quickLinks.length > 0 && (
-              <div className="pt-4">
+              <motion.div variants={item} className="pt-4">
                 <div className="text-xs font-mono text-crimson mb-3">QUICK LINKS</div>
                 <div className="border-t border-gray-muted/20 pt-3">
                   <div className="flex flex-wrap gap-3">
@@ -113,40 +125,33 @@ export function Hero() {
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* System status */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+            <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
               {[
-                { label: 'STATUS', value: 'ONLINE', color: 'lavender', action: () => console.log('Status clicked') },
-                { label: 'FOCUS', value: 'BUILDING', color: 'text-light', action: () => console.log('Focus clicked') },
-                { label: 'AVAILABLE', value: 'YES', color: 'lavender', action: () => console.log('Available clicked') },
-                { label: 'EDITOR', value: 'NEOVIM', color: 'text-light', action: () => console.log('Editor clicked') },
-              ].map((item) => (
-                <motion.button
-                  key={item.label}
-                  onClick={item.action}
-                  className="border border-gray-muted/20 p-3 bg-void-light/30 cursor-pointer group interactive"
-                  whileHover={{ 
-                    borderColor: 'rgba(184, 174, 216, 0.3)',
-                    backgroundColor: 'rgba(18, 18, 22, 0.5)',
-                    y: -2
-                  }}
-                  whileTap={{ scale: 0.98 }}
+                { label: 'STATUS', value: 'ONLINE', color: 'text-lavender' },
+                { label: 'FOCUS', value: 'BUILDING', color: 'text-text-light' },
+                { label: 'AVAILABLE', value: 'YES', color: 'text-lavender' },
+                { label: 'EDITOR', value: 'NEOVIM', color: 'text-text-light' },
+              ].map((status) => (
+                <div
+                  key={status.label}
+                  className="border border-gray-muted/20 p-3 bg-void-light/30 group transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-lavender/30 hover:bg-void-light/50"
                 >
                   <div className="text-xs font-mono text-gray-muted mb-1 group-hover:text-crimson transition-colors">
-                    {item.label}
+                    {status.label}
                   </div>
-                  <div className={`text-sm font-mono text-${item.color} group-hover:text-lavender transition-colors`}>
-                    {item.value}
+                  <div className={`text-sm font-mono ${status.color} group-hover:text-lavender transition-colors`}>
+                    {status.value}
                   </div>
-                </motion.button>
+                </div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Environment info - compact */}
-            <div className="pt-6">
+            <motion.div variants={item} className="pt-6">
               <div className="border border-gray-muted/20 bg-void-light/20 p-4">
                 <div className="text-xs font-mono text-crimson mb-3 flex items-center gap-2">
                   <span>ENVIRONMENT</span>
@@ -167,14 +172,18 @@ export function Hero() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Scroll indicator */}
           <motion.div
             className="absolute bottom-12 left-1/2 -translate-x-1/2"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, y: [0, 8, 0] }}
+            transition={{
+              opacity: { delay: 1.2, duration: 0.8 },
+              y: { repeat: Infinity, duration: 2.4, ease: 'easeInOut' },
+            }}
           >
             <div className="text-xs font-mono text-gray-muted">
               SCROLL TO EXPLORE
