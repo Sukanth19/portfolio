@@ -135,8 +135,9 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       return output
     },
     stack: () => [
-      'Languages: C, C++, Python, JavaScript, TypeScript, Java',
+      'Languages: C, C++, Python, JavaScript, TypeScript, Kotlin, Java',
       'Web: React, Next.js, FastAPI, Flask, Laravel, PHP',
+      'ML: PyTorch, OpenCV, scikit-learn',
       'Infrastructure: Linux, AWS, EC2, Ubuntu, Nginx, Docker',
       'Databases: PostgreSQL, MongoDB, Redis',
       'Tools: Neovim, Git, Postman',
