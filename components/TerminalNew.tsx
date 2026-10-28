@@ -44,7 +44,7 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
     return () => clearInterval(interval)
   }, [])
 
-  // Listen for toggle terminal events (Ctrl + `)
+  // Listen for toggle terminal events (from the command palette)
   useEffect(() => {
     const handleToggle = () => {
       setWindowState(prev => {
@@ -102,19 +102,22 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '  history     - Command history',
       '  clear       - Clear terminal',
       '  echo <text> - Echo text',
+      '  hire        - The important one',
       '  snake       - Play Snake game',
-      '  glitch      - Toggle glitch mode',
+      '',
+      'There may be a few more. Poke around.',
     ],
     about: () => [
       'Computer Science student who learns by building.',
       'Interests: AI/ML, Cybersecurity, Game Dev, Graphics, Systems',
       'Philosophy: Build it. Break it. Understand it. Rebuild it better.',
+      'Fun fact: I use Arch, btw.',
     ],
     experience: () => {
       const output = ['EXPERIENCE', '']
       experiences.forEach(exp => {
         output.push('2026')
-        output.push(`├── ${exp.type.charAt(0).toUpperCase() + exp.type.slice(1)} - ${exp.role}`)
+        output.push(`├── ${exp.type.charAt(0).toUpperCase() + exp.type.slice(1)} - ${exp.role}${exp.organization ? ` @ ${exp.organization}` : ''}`)
         output.push(`│   ├── ${exp.startDate} → ${exp.endDate}`)
         exp.technologies.forEach((tech, i) => {
           const isLast = i === exp.technologies.length - 1
@@ -198,23 +201,38 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
       '                         FOCUS:    BUILDING',
       '                         STATUS:   ONLINE',
     ],
-    whoami: () => 'Sukanth - Developer / Builder / Experimenter',
+    whoami: () => 'Sukanth: developer, builder, professional rabbit-hole diver',
     history: () => history.length > 0 ? history : ['No command history'],
     clear: () => {
       setLines([])
       return ''
     },
-    sudo: () => 'Nice try. 😎',
+    sudo: () => 'Nice try. 😎 (say the magic words: sudo make me a sandwich)',
     'rm -rf /': () => 'Permission denied. (Thankfully.)',
     echo: () => input.split(' ').slice(1).join(' ') || '',
     snake: () => {
       setShowSnake(true)
       return 'Loading Snake game...'
     },
-    glitch: () => {
-      window.dispatchEvent(new CustomEvent('toggleGlitch'))
-      return 'Glitch mode toggled. Reality.exe has stopped responding...'
+    hire: () => {
+      window.location.href = 'mailto:sukan3066@gmail.com?subject=Let%27s%20build%20something'
+      return 'Opening your mail client... great decision, honestly.'
     },
+    vim: () => 'You are now trapped in vim. (Kidding. Hint: :q!)',
+    ':q': () => 'Not here. This is a website. But I respect the reflex.',
+    ':q!': () => 'Not here. This is a website. But I respect the reflex.',
+    coffee: () => [
+      '      ( (',
+      '       ) )',
+      '    ........',
+      '    |      |]',
+      '    \\      /',
+      "     `----'",
+      'Brewing... ☕ productivity +20%',
+    ],
+    'sudo make me a sandwich': () => 'Okay. 🥪',
+    ls: () => 'about  experience  projects  stack  lab  secrets.txt',
+    'cat secrets.txt': () => 'The secret is that half my bugs are fixed by restarting things.',
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -298,7 +316,7 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
     setHistoryIndex(-1)
 
     const [cmd, ...args] = trimmedInput.toLowerCase().split(' ')
-    const commandFn = commands[cmd] || commands[trimmedInput.toLowerCase()]
+    const commandFn = commands[trimmedInput.toLowerCase()] || commands[cmd]
 
     if (commandFn) {
       const result = commandFn()
@@ -312,7 +330,7 @@ export function TerminalNew({ initialState = 'minimized' }: TerminalProps) {
     } else {
       setLines(prev => [
         ...prev,
-        { type: 'error', content: `Command not found: ${trimmedInput}` },
+        { type: 'error', content: `Command not found: ${trimmedInput}. Try "help" (I promise it's helpful)` },
       ])
     }
 

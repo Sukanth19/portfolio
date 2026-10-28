@@ -71,7 +71,7 @@ export function Hero() {
 
             <motion.div variants={item} className="font-mono text-sm text-gray-muted max-w-2xl space-y-2 border-l-2 border-purple-deep pl-4">
               <p className="text-text-light/80">
-                building systems • breaking abstractions • figuring out how things work
+                i build things that are slightly too hard for me, then figure them out along the way
               </p>
             </motion.div>
 
@@ -133,8 +133,8 @@ export function Hero() {
               {[
                 { label: 'STATUS', value: 'ONLINE', color: 'text-lavender' },
                 { label: 'FOCUS', value: 'BUILDING', color: 'text-text-light' },
-                { label: 'AVAILABLE', value: 'YES', color: 'text-lavender' },
-                { label: 'EDITOR', value: 'NEOVIM', color: 'text-text-light' },
+                { label: 'OPEN TO', value: 'INTERNSHIPS', color: 'text-lavender' },
+                { label: 'EDITOR', value: 'NEOVIM (can\'t exit)', color: 'text-text-light' },
               ].map((status) => (
                 <div
                   key={status.label}
@@ -160,7 +160,7 @@ export function Hero() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs font-mono">
                   <div className="flex justify-between">
                     <span className="text-gray-muted">OS</span>
-                    <span className="text-text-light">ARCH LINUX</span>
+                    <span className="text-text-light">ARCH LINUX <span className="text-gray-muted">(btw)</span></span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-muted">WM</span>

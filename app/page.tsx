@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { AnimatePresence, MotionConfig, motion, useScroll, useSpring } from 'framer-motion'
+import { MotionConfig, motion, useScroll, useSpring } from 'framer-motion'
 import { BootSequence } from '@/components/BootSequence'
 import { CursorSystem } from '@/components/interactive/CursorSystem'
 import { BackgroundSystem } from '@/components/interactive/BackgroundSystem'
 import { EnvironmentSystem } from '@/components/interactive/EnvironmentSystem'
-import { GlitchEffect } from '@/components/effects/GlitchEffect'
 import { Navigation } from '@/components/Navigation'
 import { CommandPalette } from '@/components/CommandPalette'
 import { Hero } from '@/components/Hero'
@@ -20,15 +19,11 @@ import { LabSection } from '@/components/LabSection'
 import { TerminalNew } from '@/components/TerminalNew'
 import { Footer } from '@/components/Footer'
 import { SettingsPanel } from '@/components/SettingsPanel'
-import { useKeyboard } from '@/hooks/useKeyboard'
-import { useKonamiCode } from '@/hooks/useKonamiCode'
 
 export default function Home() {
   // Content always renders (and is server-rendered); the boot sequence is an overlay on top
   const [booted, setBooted] = useState(false)
-  const [glitchActive, setGlitchActive] = useState(false)
-  const [konamiToast, setKonamiToast] = useState(false)
-  const { commandPaletteOpen, setCommandPaletteOpen } = useKeyboard()
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false)
   const { scrollYProgress } = useScroll()
   const scrollProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 })
 
@@ -46,18 +41,8 @@ export default function Home() {
       }
     }
 
-    // Listen for glitch toggle
-    const handleGlitchToggle = () => {
-      setGlitchActive(prev => !prev)
-    }
-
     window.addEventListener('keydown', handleEscape)
-    window.addEventListener('toggleGlitch', handleGlitchToggle)
-    
-    return () => {
-      window.removeEventListener('keydown', handleEscape)
-      window.removeEventListener('toggleGlitch', handleGlitchToggle)
-    }
+    return () => window.removeEventListener('keydown', handleEscape)
   }, [booted])
 
   // Keep the page from scrolling behind the boot overlay
@@ -76,9 +61,14 @@ export default function Home() {
       return
     }
 
+    if (section === 'terminal') {
+      window.dispatchEvent(new CustomEvent('toggleTerminal'))
+      return
+    }
+
     const sectionId = section === 'system' ? 'hero' : section
     const element = document.getElementById(sectionId)
-    
+
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     } else if (section === 'system') {
@@ -86,33 +76,12 @@ export default function Home() {
     }
   }
 
-  // Konami Code Easter Egg
-  useKonamiCode(() => {
-    // Enable glitch mode and show snake game
-    setGlitchActive(true)
-    setKonamiToast(true)
-    setTimeout(() => setKonamiToast(false), 3000)
-  })
-
   return (
     // One easing curve for every animation that doesn't set its own; honours prefers-reduced-motion
     <MotionConfig transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} reducedMotion="user">
       {!booted && (
         <BootSequence onComplete={handleBootComplete} />
       )}
-
-      <AnimatePresence>
-        {konamiToast && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
-            animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
-            exit={{ opacity: 0, scale: 0.8, x: '-50%', y: '-50%' }}
-            className="fixed top-1/2 left-1/2 z-[10000] rounded-lg bg-lavender/95 px-10 py-5 font-mono font-bold text-void shadow-[0_0_30px_rgba(184,174,216,0.8)]"
-          >
-            🎮 KONAMI CODE ACTIVATED! Unlocking retro mode...
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Scroll progress */}
       <motion.div
@@ -127,7 +96,6 @@ export default function Home() {
             <CursorSystem />
             <BackgroundSystem />
             <EnvironmentSystem />
-            <GlitchEffect isActive={glitchActive} />
           </>
         )}
         <Navigation onNavigate={handleNavigate} />
@@ -141,7 +109,7 @@ export default function Home() {
           {/* Remount after boot so the intro animation plays once the overlay is gone */}
           <Hero key={booted ? 'booted' : 'booting'} />
         </div>
-        
+
         <AboutSection />
         <ExperienceSection />
         <ProjectsSection />

@@ -101,9 +101,9 @@ Showcases your most starred repositories with descriptions, stats, and direct li
 ### Interactive Elements
 - Custom cursor system
 - Dynamic background effects
-- Command palette (Ctrl+K)
+- Command palette
 - Terminal emulator
-- Easter eggs (try the Konami code!)
+- A few easter eggs in the terminal
 
 ## 🔐 Environment Variables
 

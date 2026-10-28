@@ -4,8 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { buildLog, type BuildLogEntry } from '@/data/buildLog'
 import type { GitHubCommit } from '@/lib/github'
-import { SystemCoordinates } from './ui/SystemCoordinates'
-import { SystemTimestamp } from './ui/SystemTimestamp'
 
 const EASE = [0.22, 1, 0.36, 1] as const
 const INITIAL_COUNT = 4
@@ -111,10 +109,6 @@ export function BuildLogSection() {
             <div className="flex items-center gap-4">
               <div className="w-12 h-px bg-crimson" />
               <h2 className="text-sm font-mono text-crimson">07</h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={720} y={140} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">

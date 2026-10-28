@@ -16,7 +16,10 @@ export const terminalCommands = [
   'sudo',
   'echo',
   'snake',
-  'glitch',
+  'hire',
+  'coffee',
+  'vim',
+  'ls',
 ] as const
 
 export type TerminalCommand = typeof terminalCommands[number]
@@ -24,7 +27,7 @@ export type TerminalCommand = typeof terminalCommands[number]
 export const terminalConfig = {
   prompt: 'sukanth@portfolio:~$',
   welcomeMessage: [
-    'Welcome to Sukanth Portfolio Terminal v1.0.0',
+    'Welcome to Sukanth Portfolio Terminal v1.0.0 (now with 30% fewer bugs)',
     'Type "help" for available commands',
   ],
   shortcuts: {

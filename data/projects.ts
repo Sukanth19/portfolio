@@ -15,6 +15,51 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'eidothea',
+    title: 'Eidothea',
+    tagline: 'It knows you\'re reading',
+    description: 'Horror fiction archive and community platform. Seeded with ~3,500 creepypastas, searchable by rating and ~30 fear categories, with accounts so readers can sign up and publish their own stories. Self-hosted on an Azure VM.',
+    technology: [
+      'Next.js',
+      'React',
+      'TypeScript',
+      'Motion',
+      'Python',
+      'FastAPI',
+      'SQLite',
+      'pandas',
+      'Caddy',
+      'Azure'
+    ],
+    features: [
+      'Archive of ~3,500 stories imported from the DavidGetter1/creepypastas dataset',
+      'Browse by rating or across ~30 fear categories',
+      'Random story mode for quick reads',
+      'User registration, login and session-based auth',
+      'Members can write and publish their own stories',
+      'Role hierarchy (owner / admin / user) for moderation',
+      'Toggleable "transmission" visual effects layer'
+    ],
+    challenges: [
+      'Cleaning and importing a large text dataset with a pandas pipeline',
+      'Auto-tagging thousands of stories into consistent categories',
+      'Designing an unsettling, terminal-style reading experience that stays readable',
+      'Splitting the app into a FastAPI backend and a Next.js frontend',
+      'Deploying both services on a single Azure VM with systemd and Caddy (auto HTTPS)'
+    ],
+    learned: [
+      'Data ingestion and normalization with pandas',
+      'Building REST APIs and session auth with FastAPI',
+      'Next.js App Router with React 19 and Motion',
+      'Linux server deployment: systemd units, reverse proxy, TLS, backups',
+      'Designing themed UI without sacrificing long-form readability'
+    ],
+    status: 'LIVE',
+    github: 'https://github.com/Sukanth19/eidothea',
+    demo: 'https://eidothea.indiasouthcentral.cloudapp.azure.com',
+    visual: 'archive'
+  },
+  {
     id: 'jamr',
     title: 'jamr.io',
     tagline: 'Real-time music matchmaking',
@@ -95,52 +140,6 @@ export const projects: Project[] = [
     status: 'BUILDING',
     visual: 'market'
   },
-  {
-    id: 'eidothea',
-    title: 'Eidothea',
-    tagline: 'It knows you\'re reading',
-    description: 'Horror fiction archive and community platform. Seeded with ~3,500 creepypastas, searchable by rating and ~30 fear categories, with accounts so readers can sign up and publish their own stories. Self-hosted on an Azure VM.',
-    technology: [
-      'Next.js',
-      'React',
-      'TypeScript',
-      'Motion',
-      'Python',
-      'FastAPI',
-      'SQLite',
-      'pandas',
-      'Caddy',
-      'Azure'
-    ],
-    features: [
-      'Archive of ~3,500 stories imported from the DavidGetter1/creepypastas dataset',
-      'Browse by rating or across ~30 fear categories',
-      'Random story mode for quick reads',
-      'User registration, login and session-based auth',
-      'Members can write and publish their own stories',
-      'Role hierarchy (owner / admin / user) for moderation',
-      'Toggleable "transmission" visual effects layer'
-    ],
-    challenges: [
-      'Cleaning and importing a large text dataset with a pandas pipeline',
-      'Auto-tagging thousands of stories into consistent categories',
-      'Designing an unsettling, terminal-style reading experience that stays readable',
-      'Splitting the app into a FastAPI backend and a Next.js frontend',
-      'Deploying both services on a single Azure VM with systemd and Caddy (auto HTTPS)'
-    ],
-    learned: [
-      'Data ingestion and normalization with pandas',
-      'Building REST APIs and session auth with FastAPI',
-      'Next.js App Router with React 19 and Motion',
-      'Linux server deployment: systemd units, reverse proxy, TLS, backups',
-      'Designing themed UI without sacrificing long-form readability'
-    ],
-    status: 'LIVE',
-    github: 'https://github.com/Sukanth19/eidothea',
-    demo: 'https://eidothea.indiasouthcentral.cloudapp.azure.com',
-    visual: 'archive'
-  },
-
   {
     id: 'github-analyzer',
     title: 'GitHub Code Analyzer',

@@ -29,13 +29,6 @@ html[data-booted] .boot-overlay {
   display: none;
 }
 
-/* Hide default cursor where the custom one takes over (mouse/trackpad only) */
-@media (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
-}
-
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

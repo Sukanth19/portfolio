@@ -57,7 +57,12 @@ export function ExperienceDetail({ experience, onClose }: ExperienceDetailProps)
               {/* Role */}
               <section className="mb-8">
                 <h2 className="text-sm font-mono text-crimson mb-3">ROLE</h2>
-                <p className="text-lg text-lavender">{experience.role}</p>
+                <p className="text-lg text-lavender">
+                  {experience.role}
+                  {experience.organization && (
+                    <span className="text-text-light"> @ {experience.organization}</span>
+                  )}
+                </p>
               </section>
 
               {/* Environment */}

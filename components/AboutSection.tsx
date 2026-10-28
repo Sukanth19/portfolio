@@ -1,8 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { SystemTimestamp } from './ui/SystemTimestamp'
-import { SystemCoordinates } from './ui/SystemCoordinates'
 
 export function AboutSection() {
   const interests = [
@@ -20,7 +18,7 @@ export function AboutSection() {
     { label: 'APPROACH', value: 'Learning through building' },
     { label: 'PRIORITY', value: 'Understanding over memorization' },
     { label: 'METHOD', value: 'Build. Break. Understand. Rebuild.' },
-    { label: 'MINDSET', value: 'Execution over planning' },
+    { label: 'DEBUGGING', value: 'print statements, unapologetically' },
   ]
 
   return (
@@ -46,10 +44,6 @@ export function AboutSection() {
               >
                 02
               </motion.h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={214} y={892} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">
@@ -116,15 +110,12 @@ export function AboutSection() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-mono text-lavender">INTERESTS</h3>
-              <SystemCoordinates />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {interests.map((interest, i) => (
                 <motion.div
                   key={i}
-                  className="border border-gray-muted/20 p-3 text-sm text-gray-muted hover:border-lavender/30 hover:text-text-light transition-colors cursor-pointer"
-                  whileHover={{ x: 4, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="border border-gray-muted/20 p-3 text-sm text-gray-muted hover:border-lavender/30 hover:text-text-light transition-colors"
                 >
                   {interest}
                 </motion.div>
@@ -140,7 +131,6 @@ export function AboutSection() {
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-mono text-lavender">PHILOSOPHY</h3>
-              <SystemCoordinates />
             </div>
             <div className="space-y-4">
               {philosophy.map((item, i) => (

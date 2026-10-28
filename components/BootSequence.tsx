@@ -9,11 +9,11 @@ interface BootSequenceProps {
 
 const bootMessages = [
   'INITIALIZING SYSTEM...',
-  'LOADING CORE MODULES...',
-  'MOUNTING FILE SYSTEMS...',
-  'STARTING SERVICES...',
-  'ESTABLISHING CONNECTIONS...',
-  'SYSTEM READY',
+  'LOADING PERSONALITY.DLL...',
+  'BREWING COFFEE...',
+  'HIDING BUGS FROM RECRUITERS... DONE',
+  'CONVINCING CSS TO COOPERATE...',
+  'SYSTEM READY (MOSTLY)',
 ]
 
 export function BootSequence({ onComplete }: BootSequenceProps) {

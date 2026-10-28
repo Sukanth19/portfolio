@@ -19,7 +19,6 @@ const commands = [
   { id: 'contact', label: 'Connect', icon: '→' },
   { id: 'github', label: 'Open GitHub', icon: '↗' },
   { id: 'terminal', label: 'Open Terminal', icon: '>' },
-  { id: 'glitch', label: 'Toggle Glitch Mode', icon: '⚡' },
 ]
 
 export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPaletteProps) {
@@ -41,7 +40,9 @@ export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPalettePr
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
 
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'Escape') {
+        onClose()
+      } else if (e.key === 'ArrowDown') {
         e.preventDefault()
         setSelectedIndex((prev) =>
           prev < filteredCommands.length - 1 ? prev + 1 : 0
@@ -51,7 +52,7 @@ export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPalettePr
         setSelectedIndex((prev) =>
           prev > 0 ? prev - 1 : filteredCommands.length - 1
         )
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' && filteredCommands.length > 0) {
         e.preventDefault()
         handleSelect(filteredCommands[selectedIndex].id)
       }
@@ -65,10 +66,6 @@ export function CommandPalette({ isOpen, onClose, onNavigate }: CommandPalettePr
   const handleSelect = (commandId: string) => {
     if (commandId === 'github') {
       window.open('https://github.com/Sukanth19', '_blank')
-    } else if (commandId === 'terminal') {
-      onNavigate('terminal')
-    } else if (commandId === 'glitch') {
-      window.dispatchEvent(new CustomEvent('toggleGlitch'))
     } else {
       onNavigate(commandId)
     }

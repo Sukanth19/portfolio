@@ -4,8 +4,6 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { experiences } from '@/data/experience'
 import { ExperienceDetail } from './ExperienceDetail'
-import { SystemTimestamp } from './ui/SystemTimestamp'
-import { SystemCoordinates } from './ui/SystemCoordinates'
 
 export function ExperienceSection() {
   const [selectedExperience, setSelectedExperience] = useState<string | null>(null)
@@ -37,10 +35,6 @@ export function ExperienceSection() {
               >
                 03
               </motion.h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={387} y={512} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">
@@ -86,6 +80,9 @@ export function ExperienceSection() {
               {/* Role */}
               <div className="text-sm font-mono text-lavender mb-4">
                 {experience.type.toUpperCase()} • {experience.role}
+                {experience.organization && (
+                  <span className="text-text-light"> @ {experience.organization}</span>
+                )}
               </div>
 
               {/* Technologies */}

@@ -25,38 +25,38 @@ export const experiences: Experience[] = [
   {
     id: 'internship-2026',
     type: 'internship',
-    role: 'SDE',
+    role: 'SDE Intern',
+    organization: 'IMIK Technologies',
     startDate: 'April 2026',
     endDate: 'May 2026',
     duration: '~2 months',
     technologies: [
       'Laravel',
       'PHP',
+      'Livewire',
+      'Tailwind CSS',
+      'MySQL',
       'AWS',
       'EC2',
       'Ubuntu',
-      'Linux',
       'Nginx',
       'Python'
     ],
     work: [
-      'Laravel-based web application development',
-      'Backend development with PHP',
-      'AWS infrastructure management',
-      'EC2 server environment configuration',
-      'Ubuntu/Linux system administration',
-      'Nginx web server setup and configuration',
-      'Deployment and configuration workflows',
-      'System debugging and troubleshooting'
+      'Revamped the entire UI of Coir Power, IMIK\'s IoT platform for monitoring power, production and water usage in coir manufacturing units',
+      'Built an AI chatbot for the platform in Python',
+      'Hosted the Laravel 12 app on AWS EC2 (Ubuntu, Nginx, MySQL)',
+      'Configured server environments and deployment workflows',
+      'Debugged and troubleshot issues in production'
     ],
     systems: [
+      'Coir Power IoT monitoring platform',
       'AWS cloud infrastructure',
       'Linux server environments',
-      'Web application deployment pipelines',
-      'Backend API development'
+      'Web application deployment pipelines'
     ],
     ai: {
-      description: 'Python-based AI chatbot development',
+      description: 'AI chatbot built for the Coir Power platform',
       language: 'Python'
     },
     learning: [

@@ -1,34 +1,20 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 
 interface NavigationProps {
   onNavigate: (section: string) => void
 }
 
 export function Navigation({ onNavigate }: NavigationProps) {
-  const [logoClicks, setLogoClicks] = useState(0)
-
   const sections = [
-    { id: 'system', label: 'SYSTEM', shortcut: 'Ctrl+H' },
-    { id: 'about', label: 'ABOUT', shortcut: 'Ctrl+A' },
-    { id: 'experience', label: 'EXPERIENCE', shortcut: 'Ctrl+E' },
-    { id: 'projects', label: 'PROJECTS', shortcut: 'Ctrl+P' },
-    { id: 'stack', label: 'STACK', shortcut: 'Ctrl+S' },
-    { id: 'lab', label: 'LAB', shortcut: 'Ctrl+L' },
+    { id: 'system', label: 'SYSTEM' },
+    { id: 'about', label: 'ABOUT' },
+    { id: 'experience', label: 'EXPERIENCE' },
+    { id: 'projects', label: 'PROJECTS' },
+    { id: 'stack', label: 'STACK' },
+    { id: 'lab', label: 'LAB' },
   ]
-
-  const handleLogoClick = () => {
-    const newCount = logoClicks + 1
-    setLogoClicks(newCount)
-    
-    if (newCount === 7) {
-      // Easter egg trigger
-      console.log('🎉 Secret unlocked!')
-      setLogoClicks(0)
-    }
-  }
 
   return (
     <motion.nav
@@ -40,7 +26,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
       <div className="bg-void-light/80 backdrop-blur-md border border-gray-muted/20 rounded-full px-6 py-3 shadow-2xl">
         <div className="flex items-center gap-6">
           <motion.button
-            onClick={handleLogoClick}
+            onClick={() => onNavigate('system')}
             className="text-lavender font-mono font-bold text-sm tracking-wider interactive"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -66,7 +52,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
           <button
             onClick={() => onNavigate('command')}
             className="text-xs font-mono text-gray-muted hover:text-text-light transition-colors interactive"
-            title="Command Palette [/]"
+            title="Command palette"
           >
             <span className="hidden md:inline">/</span>
             <span className="md:hidden">☰</span>

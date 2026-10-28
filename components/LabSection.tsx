@@ -2,8 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { experiments } from '@/data/experiments'
-import { SystemTimestamp } from './ui/SystemTimestamp'
-import { SystemCoordinates } from './ui/SystemCoordinates'
 
 export function LabSection() {
   return (
@@ -29,10 +27,6 @@ export function LabSection() {
               >
                 06
               </motion.h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={619} y={124} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">
@@ -80,7 +74,6 @@ export function LabSection() {
                 >
                   [{experiment.status}]
                 </motion.span>
-                <SystemCoordinates />
               </div>
 
               {/* Title */}

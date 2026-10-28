@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { socials } from '@/data/socials'
+import { socials, emailUrl } from '@/data/socials'
 
 export function Footer() {
   const footerLinks = socials.filter(s => s.showInQuickLinks && s.url !== '[To Be Updated]' && s.url !== '#')
@@ -11,6 +11,7 @@ export function Footer() {
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-80px' }}
+      id="contact"
       className="py-12 px-8 border-t border-gray-muted/20"
     >
       <div className="max-w-5xl mx-auto">
@@ -19,7 +20,7 @@ export function Footer() {
           <div className="font-mono text-sm">
             <span className="text-text-light font-bold">SUKANTH19</span>
             <span className="text-gray-muted mx-3">•</span>
-            <span className="text-lavender text-xs">SYSTEM ONLINE</span>
+            <a href={emailUrl} className="text-lavender text-xs hover:text-text-light transition-colors">SAY HI</a>
           </div>
 
           {/* Links */}
@@ -46,7 +47,7 @@ export function Footer() {
 
           {/* Copyright */}
           <div className="text-xs font-mono text-gray-muted/60 pt-2">
-            © 2026 Sukanth
+            © 2026 Sukanth · built at 3am · no tutorials were harmed
           </div>
         </div>
       </div>

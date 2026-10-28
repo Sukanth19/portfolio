@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { Project } from '@/data/projects'
-import { SystemCoordinates } from '../ui/SystemCoordinates'
 
 interface ProjectCardProps {
   project: Project
@@ -36,7 +35,6 @@ export function ProjectCard({ project, onClick }: ProjectCardProps) {
           [{project.status}]
         </motion.span>
         <div className="flex items-center gap-3">
-          <SystemCoordinates />
           <motion.span
             className="text-gray-muted group-hover:text-lavender transition-colors"
             animate={{ x: [0, 4, 0] }}

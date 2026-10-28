@@ -5,8 +5,6 @@ import { useState } from 'react'
 import { projects } from '@/data/projects'
 import { ProjectCard } from './ProjectCard'
 import { ProjectDetail } from './ProjectDetail'
-import { SystemTimestamp } from '../ui/SystemTimestamp'
-import { SystemCoordinates } from '../ui/SystemCoordinates'
 
 export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<string | null>(null)
@@ -38,10 +36,6 @@ export function ProjectsSection() {
               >
                 04
               </motion.h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={410} y={777} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">

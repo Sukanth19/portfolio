@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { technologies } from '@/data/technologies'
-import { SystemTimestamp } from './ui/SystemTimestamp'
-import { SystemCoordinates } from './ui/SystemCoordinates'
 
 export function TechStackSection() {
   const [hoveredTech, setHoveredTech] = useState<string | null>(null)
@@ -38,10 +36,6 @@ export function TechStackSection() {
               >
                 05
               </motion.h2>
-            </div>
-            <div className="flex items-center gap-4">
-              <SystemCoordinates x={507} y={340} />
-              <SystemTimestamp />
             </div>
           </div>
           <h2 className="text-5xl font-bold text-text-light mb-4">
