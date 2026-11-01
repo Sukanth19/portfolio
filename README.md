@@ -1,147 +1,60 @@
-# Sukanth - JS Developer
+# Sukanth - Portfolio
 
-Personal portfolio website with live GitHub integration.
+Personal portfolio: a loud acid-green and black poster layout with a live GitHub feed.
 
-## ✨ Features
+## Stack
 
-- 🎨 Cyberpunk-themed design with interactive elements
-- 🚀 Boot sequence animation
-- 💻 Interactive terminal emulator
-- 🎮 Easter eggs and hidden games
-- 📊 **Live GitHub integration**:
-  - Real-time commit activity in Build Log
-  - Top repositories showcase
-  - Repository statistics (stars, forks, commits)
-  - Automatic updates with smart caching
+- Next.js 14 (App Router), TypeScript
+- Tailwind CSS
+- Fonts: Archivo Black (display) and JetBrains Mono
+- GitHub GraphQL and REST APIs for the live commit log and top repos
 
-## 🛠️ Tech Stack
+## Quick start
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
-- **API**: GitHub GraphQL API
-
-## 🚀 Quick Start
-
-### 1. Clone & Install
 ```bash
-git clone <your-repo-url>
-cd portfolio
 npm install
-```
-
-### 2. Setup GitHub Integration (Optional but Recommended)
-
-Create a `.env.local` file:
-
-```bash
-cp .env.example .env.local
-```
-
-Add your GitHub credentials:
-
-```env
-GITHUB_TOKEN=your_github_token_here
-GITHUB_USERNAME=Sukanth19
-```
-
-**Get your token**: https://github.com/settings/tokens
-- Select scopes: `public_repo`, `read:user`
-
-### 3. Test & Run
-
-```bash
-# Test GitHub connection (optional)
-npm run test:github
-
-# Start development server
+cp .env.example .env.local   # optional, see below
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000).
 
-GitHub data is fetched server-side through `app/api/github/*` routes, so the token is never shipped to the browser.
+## GitHub integration
 
-## 🔧 Available Scripts
+Commits and repos are fetched server-side through `app/api/github/*`, so the token never reaches the browser. Without a token it falls back to the public REST API.
+
+```env
+GITHUB_TOKEN=your_github_token_here   # scopes: public_repo, read:user
+GITHUB_USERNAME=Sukanth19
+```
+
+`npm run test:github` checks that the token works.
+
+## Project structure
+
+```
+app/
+  page.tsx              # the whole homepage
+  globals.css           # colours, keyframes, crosshair cursor
+  api/github/           # build-log and repos endpoints
+components/poster/      # GitHubActivity (client-side live feed)
+data/                   # projects, experience, lab, tech, socials
+lib/github.ts           # GitHub API helpers
+public/                 # resume.pdf, favicon
+```
+
+To update content, edit the files in `data/`.
+
+## Scripts
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run test:github  # Test GitHub API connection
+npm run dev          # dev server
+npm run build        # production build
+npm run start        # serve the build
+npm run lint         # eslint
+npm run test:github  # test the GitHub token
 ```
 
-## 📁 Project Structure
+## Deploy
 
-```
-├── app/                    # Next.js app directory
-├── components/             # React components
-│   ├── effects/           # Visual effects
-│   ├── games/             # Easter egg games
-│   ├── interactive/       # Interactive systems
-│   ├── projects/          # Project showcase
-│   └── ui/                # UI components
-├── data/                   # Static data
-├── hooks/                  # Custom React hooks
-├── lib/                    # Utility functions & APIs
-│   └── github.ts          # GitHub API integration
-└── public/                 # Static assets
-```
-
-## 🎨 Key Features Explained
-
-### Live Build Log
-Automatically fetches your latest commits from GitHub and displays them in a timeline format. Falls back to static data if GitHub token is not configured.
-
-### Top Repositories
-Showcases your most starred repositories with descriptions, stats, and direct links. Updates automatically with smart caching.
-
-### Interactive Elements
-- Custom cursor system
-- Dynamic background effects
-- Command palette
-- Terminal emulator
-- A few easter eggs in the terminal
-
-## 🔐 Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GITHUB_TOKEN` | GitHub Personal Access Token | Optional* |
-| `GITHUB_USERNAME` | Your GitHub username | Optional* |
-| `NEXT_PUBLIC_SITE_URL` | Your deployed site URL | No |
-
-\* *Required for live GitHub integration. Site works without it using static data.*
-
-## 🚢 Deployment
-
-Deploy to Vercel (recommended):
-
-```bash
-# Push to GitHub, then:
-vercel --prod
-```
-
-**Important**: Add your environment variables in Vercel dashboard:
-1. Go to Project Settings → Environment Variables
-2. Add `GITHUB_TOKEN` and `GITHUB_USERNAME`
-3. Redeploy
-
-## 🤝 Contributing
-
-This is a personal portfolio, but feel free to fork and customize for your own use!
-
-## 📄 License
-
-MIT License - feel free to use this as a template for your own portfolio.
-
-## 📧 Contact
-
-- GitHub: [Sukanth19](https://github.com/Sukanth19)
-- Email: sukan3066@gmail.com
-
----
-
-Built with ❤️ using Next.js • TypeScript • Tailwind CSS
+Deployed on Vercel. Add `GITHUB_TOKEN` and `GITHUB_USERNAME` under Project Settings → Environment Variables.
