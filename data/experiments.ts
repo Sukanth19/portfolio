@@ -6,6 +6,8 @@ export interface Experiment {
   status: 'ACTIVE' | 'EXPERIMENT' | 'BUILDING' | 'ARCHIVED' | 'IDEA'
   technologies: string[]
   learning: string[]
+  /** Clicking the card opens a diagram of how it works */
+  diagram?: 'homelab' | 'cyberlab'
 }
 
 export const experiments: Experiment[] = [
@@ -75,17 +77,18 @@ export const experiments: Experiment[] = [
   {
     id: 'cybersec-lab',
     title: 'Cybersecurity Lab',
-    description: 'Hands-on exploration of networking, packet analysis, authentication systems, and security tooling.',
+    description: 'A sealed-off hacking playground on my laptop. A Kali VM attacks deliberately vulnerable machines on an isolated virtual network, while Wazuh plays blue team and tries to catch it.',
     focus: [
-      'Network protocol analysis',
-      'Linux security fundamentals',
-      'Packet capture and inspection',
-      'Authentication mechanisms',
-      'Security tool development',
-      'CTF-style challenges'
+      'Recon and enumeration with nmap',
+      'Exploiting services with Metasploit',
+      'Web vulns: SQL injection, XSS, broken auth',
+      'Reading logs and alerts in Wazuh',
+      'Packet capture and inspection with Wireshark',
+      'Snapshot, break, roll back, repeat'
     ],
     status: 'ACTIVE',
-    technologies: ['Linux', 'Python', 'Wireshark', 'Networking', 'Bash'],
+    technologies: ['Kali Linux', 'QEMU/KVM', 'Metasploit', 'Burp Suite', 'Wazuh', 'Wireshark'],
+    diagram: 'cyberlab',
     learning: [
       'Network security concepts',
       'Penetration testing basics',
@@ -96,17 +99,17 @@ export const experiments: Experiment[] = [
   {
     id: 'homelab',
     title: 'Home Lab',
-    description: 'Self-hosted infrastructure running Linux servers, containerized services, media servers, and network monitoring.',
+    description: 'An old laptop brought back as a home server. Jellyfin streams my movies and shows to every screen in the house, and a NAS share keeps all the files in one place.',
     focus: [
-      'Linux server administration',
-      'Docker containerization',
-      'Jellyfin media server',
-      'NAS configuration',
-      'Network setup and monitoring',
-      'Service orchestration'
+      'Turning old hardware into an always-on Linux server',
+      'Jellyfin media server in Docker',
+      'NAS file share over Samba',
+      'Home network setup',
+      'Keeping it running headless over SSH'
     ],
     status: 'ACTIVE',
-    technologies: ['Linux', 'Docker', 'Jellyfin', 'Networking', 'Bash'],
+    technologies: ['Linux', 'Docker', 'Jellyfin', 'Samba', 'SSH'],
+    diagram: 'homelab',
     learning: [
       'Infrastructure management',
       'Self-hosting practices',

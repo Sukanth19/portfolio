@@ -4,6 +4,7 @@ import { experiments } from '@/data/experiments'
 import { technologies } from '@/data/technologies'
 import { socials, emailUrl, resumePath } from '@/data/socials'
 import { GitHubActivity } from '@/components/poster/GitHubActivity'
+import { LabGrid } from '@/components/poster/LabGrid'
 
 const NAME = 'SUKANTH'
 const links = socials.filter(s => s.showInConnect && s.url.startsWith('http'))
@@ -175,25 +176,7 @@ export default function Home() {
       <section id="lab" className="scroll-mt-20 p-4 md:p-8">
         <SectionTitle index="03">Lab</SectionTitle>
         <p className="-mt-4 mb-8 max-w-xl text-sm opacity-60">side quests and experiments. less polished, more fun.</p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {experiments.map(x => (
-            <article
-              key={x.id}
-              className="group flex flex-col justify-between rounded-3xl border-2 border-dashed border-[#F5F5F0]/20 p-6 transition-colors hover:border-solid hover:border-[#D7FF3A]"
-            >
-              <div>
-                <span className="text-xs uppercase text-[#D7FF3A]">[{x.status.toLowerCase()}]</span>
-                <h3 className="mt-3 font-[family-name:var(--display)] text-3xl uppercase leading-none">{x.title}</h3>
-                <p className="mt-3 text-sm opacity-70">{x.description}</p>
-              </div>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {x.technologies.map(t => (
-                  <span key={t} className="rounded-full border border-[#F5F5F0]/30 px-3 py-1 text-xs">{t}</span>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
+        <LabGrid experiments={experiments} />
       </section>
 
       {/* Stack */}
