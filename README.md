@@ -35,12 +35,13 @@ GITHUB_USERNAME=Sukanth19
 ```
 app/
   page.tsx              # the whole homepage
+  icon.svg, favicon.ico, apple-icon.png  # favicon
   globals.css           # colours, keyframes, crosshair cursor
   api/github/           # build-log and repos endpoints
 components/poster/      # GitHubActivity (client-side live feed)
 data/                   # projects, experience, lab, tech, socials
 lib/github.ts           # GitHub API helpers
-public/                 # resume.pdf, favicon
+public/                 # resume.pdf
 ```
 
 To update content, edit the files in `data/`.
