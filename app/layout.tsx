@@ -1,16 +1,9 @@
 import type { Metadata } from 'next'
-import { JetBrains_Mono, Inter } from 'next/font/google'
+import { Archivo_Black, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-})
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-})
+const display = Archivo_Black({ subsets: ['latin'], weight: '400', variable: '--display' })
+const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--mono' })
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://sukanth19.vercel.app'),
@@ -45,18 +38,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`} suppressHydrationWarning>
-      <head>
-        {/* Hide the boot overlay before first paint for returning visitors */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('hasSeenBoot'))document.documentElement.dataset.booted=''}catch(e){}`,
-          }}
-        />
-      </head>
-      <body className="antialiased">
-        {children}
-      </body>
+    <html lang="en" className={`${display.variable} ${mono.variable}`}>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

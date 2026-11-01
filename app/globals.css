@@ -3,14 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --font-jetbrains-mono: 'JetBrains Mono', monospace;
-  --font-inter: 'Inter', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --acid: #D7FF3A;
+  --ink: #0B0B0B;
+  --paper: #F5F5F0;
 }
 
 html {
@@ -18,99 +13,45 @@ html {
 }
 
 body {
-  font-family: var(--font-inter);
-  background-color: #0a0a0d;
-  color: #E8E0EC;
+  font-family: var(--mono), monospace;
+  background-color: var(--ink);
+  color: var(--paper);
   overflow-x: hidden;
 }
 
-/* Returning visitors skip the boot overlay (flag set by inline script in layout) */
-html[data-booted] .boot-overlay {
-  display: none;
+::selection {
+  background-color: var(--acid);
+  color: var(--ink);
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0d;
+  background: var(--ink);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #5C4A66;
-  border-radius: 4px;
+  background: var(--acid);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #B8AED8;
+/* Hero name: letters rise in one after another */
+@keyframes rise {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
-/* Thin scrollbar variant */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
 }
 
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(184, 174, 216, 0.3);
-  border-radius: 2px;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(184, 174, 216, 0.5);
-}
-
-/* Selection */
-::selection {
-  background-color: #5C4A66;
-  color: #E8E0EC;
-}
-
-/* Animations */
-@keyframes scan {
-  0%, 100% {
-    transform: translateY(-100%);
-  }
-  50% {
-    transform: translateY(100vh);
-  }
-}
-
-@keyframes blink {
-  0%, 50% {
-    opacity: 1;
-  }
-  51%, 100% {
-    opacity: 0;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes glow {
-  0% {
-    opacity: 0.5;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -119,26 +60,26 @@ html[data-booted] .boot-overlay {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  
+
   html {
     scroll-behavior: auto;
   }
 }
 
-/* Focus styles for accessibility */
+/* Crosshair cursor. It's a real system cursor (drawn by the OS), so it moves at the
+   display's full refresh rate with zero lag. Links show it rotated into an x. */
+@media (pointer: fine) {
+  html, body {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg%3E%3Cpath d='M16 6v20M6 16h20' transform='translate(0 1)' stroke='rgba(0,0,0,0.25)' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M16 6v20M6 16h20' stroke='white' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M16 6v20M6 16h20' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 16 16, crosshair;
+  }
+
+  a, button, [role="button"], label, summary, .interactive {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg transform='rotate(45 16 16)'%3E%3Cpath d='M16 6v20M6 16h20' transform='translate(0 1)' stroke='rgba(0,0,0,0.25)' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M16 6v20M6 16h20' stroke='white' stroke-width='8' stroke-linecap='round'/%3E%3Cpath d='M16 6v20M6 16h20' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E") 16 16, pointer;
+  }
+}
+
 a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #B8AED8;
-  outline-offset: 2px;
-}
-
-/* Font classes */
-.font-mono {
-  font-family: var(--font-jetbrains-mono);
-}
-
-.font-sans {
-  font-family: var(--font-inter);
+button:focus-visible {
+  outline: 3px solid var(--acid);
+  outline-offset: 3px;
 }
