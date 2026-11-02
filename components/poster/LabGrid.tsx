@@ -40,7 +40,10 @@ function CardBody({ x }: { x: Experiment }) {
           {x.diagram && (
             <span className="rounded-full bg-[#D7FF3A] px-3 py-1 text-xs uppercase text-black">view diagram ↗</span>
           )}
-          {x.link && !x.diagram && (
+          {!x.diagram && x.screenshots && (
+            <span className="rounded-full bg-[#D7FF3A] px-3 py-1 text-xs uppercase text-black">screenshots ↗</span>
+          )}
+          {x.link && !x.diagram && !x.screenshots && (
             <span className="rounded-full bg-[#D7FF3A] px-3 py-1 text-xs uppercase text-black">github ↗</span>
           )}
         </div>
@@ -53,6 +56,67 @@ function CardBody({ x }: { x: Experiment }) {
         ))}
       </div>
     </>
+  )
+}
+
+function Gallery({ shots }: { shots: NonNullable<Experiment['screenshots']> }) {
+  const [i, setI] = useState(0)
+  const shot = shots[i]
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setI(n => (n + 1) % shots.length)
+      if (e.key === 'ArrowLeft') setI(n => (n - 1 + shots.length) % shots.length)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [shots.length])
+
+  return (
+    <div>
+      <div className="relative overflow-hidden rounded-2xl border border-[#F5F5F0]/10 bg-[#111]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={shot.src} alt={shot.caption} className="aspect-[16/9] w-full object-contain" />
+        {shots.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => setI((i - 1 + shots.length) % shots.length)}
+              aria-label="Previous screenshot"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-sm transition-colors hover:bg-[#D7FF3A] hover:text-black"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={() => setI((i + 1) % shots.length)}
+              aria-label="Next screenshot"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/70 px-3 py-2 text-sm transition-colors hover:bg-[#D7FF3A] hover:text-black"
+            >
+              →
+            </button>
+          </>
+        )}
+      </div>
+      <p className="mt-3 text-sm opacity-70">
+        <span className="text-[#D7FF3A]">{String(i + 1).padStart(2, '0')}/{String(shots.length).padStart(2, '0')}</span> {shot.caption}
+      </p>
+      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+        {shots.map((s, n) => (
+          <button
+            key={s.src}
+            type="button"
+            onClick={() => setI(n)}
+            aria-label={s.caption}
+            aria-current={n === i}
+            className={`shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${n === i ? 'border-[#D7FF3A]' : 'border-transparent opacity-60 hover:opacity-100'}`}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={s.src} alt="" className="h-14 w-24 object-cover md:h-16 md:w-28" loading="lazy" />
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -76,7 +140,7 @@ export function LabGrid({ experiments }: { experiments: Experiment[] }) {
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {experiments.map(x =>
-          x.diagram ? (
+          x.diagram || x.screenshots ? (
             <button
               key={x.id}
               type="button"
@@ -125,6 +189,16 @@ export function LabGrid({ experiments }: { experiments: Experiment[] }) {
                   {open.title}
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm opacity-70">{open.description}</p>
+                {open.link && (
+                  <a
+                    href={open.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block rounded-full bg-[#D7FF3A] px-4 py-2 text-sm uppercase text-black transition-transform hover:-rotate-3"
+                  >
+                    view on github ↗
+                  </a>
+                )}
               </div>
               <button
                 ref={closeRef}
@@ -137,24 +211,30 @@ export function LabGrid({ experiments }: { experiments: Experiment[] }) {
               </button>
             </div>
 
-            {/* Diagram scrolls sideways on narrow screens instead of shrinking to unreadable */}
-            <div className="-mx-1 overflow-x-auto rounded-2xl border border-[#F5F5F0]/10 bg-[#111] p-2">
-              {(() => {
-                const { Diagram } = details[open.diagram!]
-                return <Diagram />
-              })()}
-            </div>
+            {open.diagram ? (
+              <>
+                {/* Diagram scrolls sideways on narrow screens instead of shrinking to unreadable */}
+                <div className="-mx-1 overflow-x-auto rounded-2xl border border-[#F5F5F0]/10 bg-[#111] p-2">
+                  {(() => {
+                    const { Diagram } = details[open.diagram!]
+                    return <Diagram />
+                  })()}
+                </div>
 
-            <h3 className="mb-3 mt-6 text-xs uppercase opacity-60">{details[open.diagram!].stepsTitle}</h3>
-            <ol className="grid gap-3 md:grid-cols-3">
-              {details[open.diagram!].steps.map(s => (
-                <li key={s.n} className="rounded-2xl border border-[#F5F5F0]/15 p-4">
-                  <span className="font-[family-name:var(--display)] text-2xl text-[#D7FF3A]">{s.n}</span>
-                  <div className="mt-1 font-[family-name:var(--display)] uppercase">{s.title}</div>
-                  <p className="mt-2 text-sm opacity-70">{s.text}</p>
-                </li>
-              ))}
-            </ol>
+                <h3 className="mb-3 mt-6 text-xs uppercase opacity-60">{details[open.diagram!].stepsTitle}</h3>
+                <ol className="grid gap-3 md:grid-cols-3">
+                  {details[open.diagram!].steps.map(s => (
+                    <li key={s.n} className="rounded-2xl border border-[#F5F5F0]/15 p-4">
+                      <span className="font-[family-name:var(--display)] text-2xl text-[#D7FF3A]">{s.n}</span>
+                      <div className="mt-1 font-[family-name:var(--display)] uppercase">{s.title}</div>
+                      <p className="mt-2 text-sm opacity-70">{s.text}</p>
+                    </li>
+                  ))}
+                </ol>
+              </>
+            ) : open.screenshots ? (
+              <Gallery shots={open.screenshots} />
+            ) : null}
 
             <h3 className="mb-3 mt-6 text-xs uppercase opacity-60">what i&apos;m learning</h3>
             <div className="flex flex-wrap gap-2">

@@ -8,8 +8,10 @@ export interface Experiment {
   learning: string[]
   /** Clicking the card opens a diagram of how it works */
   diagram?: 'homelab' | 'cyberlab'
-  /** Clicking the card opens this url in a new tab */
+  /** Repo link, shown as a button in the popup (or opens directly if there's nothing to pop up) */
   link?: string
+  /** Clicking the card opens a gallery of these */
+  screenshots?: { src: string; caption: string }[]
 }
 
 export const experiments: Experiment[] = [
@@ -133,6 +135,14 @@ export const experiments: Experiment[] = [
     status: 'ACTIVE',
     technologies: ['Hyprland', 'Quickshell', 'QML', 'Bash', 'Arch Linux'],
     link: 'https://github.com/Sukanth19/hyprland-dots',
+    screenshots: [
+      { src: '/lab/hyprland/systemsidebar.webp', caption: 'system tab: cpu, memory, gpu, temps, history graph and top processes' },
+      { src: '/lab/hyprland/sidebar.webp', caption: 'media tab (super + a): player switcher, album art, seek bar' },
+      { src: '/lab/hyprland/emoji.webp', caption: 'emoji tab (super + .): searchable picker with recents' },
+      { src: '/lab/hyprland/scratchpadterminal.webp', caption: 'drop-down scratchpad terminal (super + `)' },
+      { src: '/lab/hyprland/terminal.webp', caption: 'kitty' },
+      { src: '/lab/hyprland/obsidian.webp', caption: 'obsidian, pinned to workspace 4 at 0.96 opacity' },
+    ],
     learning: [
       'Desktop shell internals',
       'Declarative UI with QML',
