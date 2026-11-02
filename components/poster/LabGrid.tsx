@@ -40,6 +40,9 @@ function CardBody({ x }: { x: Experiment }) {
           {x.diagram && (
             <span className="rounded-full bg-[#D7FF3A] px-3 py-1 text-xs uppercase text-black">view diagram ↗</span>
           )}
+          {x.link && !x.diagram && (
+            <span className="rounded-full bg-[#D7FF3A] px-3 py-1 text-xs uppercase text-black">github ↗</span>
+          )}
         </div>
         <h3 className="mt-3 font-[family-name:var(--display)] text-3xl uppercase leading-none">{x.title}</h3>
         <p className="mt-3 text-sm opacity-70">{x.description}</p>
@@ -82,6 +85,16 @@ export function LabGrid({ experiments }: { experiments: Experiment[] }) {
             >
               <CardBody x={x} />
             </button>
+          ) : x.link ? (
+            <a
+              key={x.id}
+              href={x.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex flex-col justify-between rounded-3xl border-2 border-[#D7FF3A]/60 p-6 text-left transition-all duration-300 hover:-translate-y-1 hover:border-[#D7FF3A] hover:shadow-[0_0_0_4px_rgba(215,255,58,0.15)]"
+            >
+              <CardBody x={x} />
+            </a>
           ) : (
             <article
               key={x.id}

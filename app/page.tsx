@@ -18,10 +18,10 @@ const nav = [
   { href: '#contact', label: 'contact' },
 ]
 
-const facts = [
+const facts: { label: string; value: string; href?: string }[] = [
   { label: 'based in', value: 'India' },
   { label: 'studying', value: 'CS @ Amrita Vishwa Vidyapeetham' },
-  { label: 'runs', value: 'Arch Linux (btw) + Hyprland' },
+  { label: 'runs', value: 'Arch Linux (btw) + Hyprland', href: 'https://github.com/Sukanth19/hyprland-dots' },
   { label: 'editor', value: "Neovim (can't exit)" },
   { label: 'debugger', value: 'print statements, unapologetically' },
   { label: 'open to', value: 'internships' },
@@ -165,7 +165,13 @@ export default function Home() {
             {facts.map(f => (
               <div key={f.label} className="grid grid-cols-3 gap-4 border-t border-[#F5F5F0]/15 py-3 text-sm">
                 <dt className="uppercase opacity-60">{f.label}</dt>
-                <dd className="col-span-2">{f.value}</dd>
+                <dd className="col-span-2">
+                  {f.href ? (
+                    <a href={f.href} target="_blank" rel="noopener noreferrer" className="underline decoration-[#D7FF3A] decoration-2 underline-offset-4 hover:text-[#D7FF3A]">
+                      {f.value} ↗
+                    </a>
+                  ) : f.value}
+                </dd>
               </div>
             ))}
           </dl>

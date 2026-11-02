@@ -8,6 +8,8 @@ export interface Experiment {
   learning: string[]
   /** Clicking the card opens a diagram of how it works */
   diagram?: 'homelab' | 'cyberlab'
+  /** Clicking the card opens this url in a new tab */
+  link?: string
 }
 
 export const experiments: Experiment[] = [
@@ -115,6 +117,26 @@ export const experiments: Experiment[] = [
       'Self-hosting practices',
       'Network administration',
       'Container orchestration'
+    ]
+  },
+  {
+    id: 'hyprland-dots',
+    title: 'Hyprland Dots',
+    description: 'My daily-driver desktop. A fork of end-4/dots-hyprland with my own Quickshell sidebar tabs for media, emoji and live system stats, plus new keybinds, window rules and a drop-down scratchpad terminal.',
+    focus: [
+      'Writing Quickshell widgets in QML',
+      'Live system stats: CPU, GPU, memory, temps',
+      'Hyprland keybinds and window rules',
+      'Drop-down scratchpad terminal',
+      'Matugen colors from the wallpaper'
+    ],
+    status: 'ACTIVE',
+    technologies: ['Hyprland', 'Quickshell', 'QML', 'Bash', 'Arch Linux'],
+    link: 'https://github.com/Sukanth19/hyprland-dots',
+    learning: [
+      'Desktop shell internals',
+      'Declarative UI with QML',
+      'Building on someone else\'s codebase'
     ]
   },
   {
