@@ -32,7 +32,7 @@ const quirks = ['build', 'break', 'understand', 'rebuild', 'arch btw', 'neovim',
 function SectionTitle({ children, index }: { children: React.ReactNode; index: string }) {
   return (
     <div className="mb-8 flex items-end justify-between gap-4">
-      <h2 className="font-[family-name:var(--display)] text-6xl uppercase leading-[0.85] md:text-8xl">
+      <h2 className="font-[family-name:var(--display)] text-5xl uppercase leading-[0.85] sm:text-6xl md:text-8xl">
         {children}
         <span className="text-[#D7FF3A]">*</span>
       </h2>
@@ -48,17 +48,17 @@ export default function Home() {
       {/* Floating nav: bottom-centre on phones, top-right on desktop */}
       <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 z-50 flex gap-1 rounded-full bg-black p-1 text-xs uppercase text-[#F5F5F0] md:bottom-auto md:right-8 md:top-6">
         {nav.map(n => (
-          <a key={n.href} href={n.href} className="rounded-full px-3 py-1.5 transition-colors hover:bg-[#D7FF3A] hover:text-black">
+          <a key={n.href} href={n.href} className="rounded-full px-2.5 py-1.5 transition-colors sm:px-3 hover:bg-[#D7FF3A] hover:text-black">
             {n.label}
           </a>
         ))}
       </nav>
 
       {/* Hero */}
-      <section className="flex min-h-screen flex-col justify-between bg-[#D7FF3A] p-4 text-black md:p-8">
+      <section className="flex min-h-[100svh] flex-col justify-between bg-[#D7FF3A] p-4 pb-20 text-black md:min-h-screen md:p-8">
         <div className="flex justify-between pr-0 text-xs uppercase md:pr-[380px]">
-          <span>[ portfolio ]</span>
-          <span className="hidden md:inline">CS student / developer / experimenter</span>
+          <span className="shrink-0">[ portfolio ]</span>
+          <span className="text-right">CS student<span className="hidden sm:inline"> / developer / experimenter</span></span>
         </div>
         <div>
           <h1 aria-label={NAME} className="flex overflow-hidden whitespace-nowrap font-[family-name:var(--display)] text-[16.5vw] uppercase leading-[0.8] tracking-[-0.04em]">
@@ -108,7 +108,7 @@ export default function Home() {
               href={p.demo ?? p.github}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative flex min-h-[320px] flex-col justify-between overflow-hidden rounded-3xl border-2 border-[#F5F5F0]/15 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#D7FF3A] hover:bg-[#D7FF3A] hover:text-black ${i === 0 ? 'md:col-span-2' : ''}`}
+              className={`group relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-3xl border-2 border-[#F5F5F0]/15 p-5 md:min-h-[320px] md:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[#D7FF3A] hover:bg-[#D7FF3A] hover:text-black ${i === 0 ? 'md:col-span-2' : ''}`}
             >
               <div className="flex items-start justify-between text-xs uppercase">
                 <span>{String(i + 1).padStart(2, '0')} / {p.status}</span>
@@ -116,7 +116,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="mb-2 text-sm opacity-70 group-hover:opacity-100">{p.tagline}</p>
-                <h3 className="font-[family-name:var(--display)] text-5xl uppercase leading-[0.9] md:text-7xl">{p.title}</h3>
+                <h3 className="break-words font-[family-name:var(--display)] text-4xl uppercase leading-[0.9] sm:text-5xl md:text-7xl">{p.title}</h3>
                 <p className="mt-3 max-w-lg text-sm opacity-70 group-hover:opacity-100">{p.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {p.technology.slice(0, 5).map(t => (
@@ -130,15 +130,15 @@ export default function Home() {
       </section>
 
       {/* Experience */}
-      <section className="m-4 rounded-3xl bg-[#F5F5F0] p-6 text-black md:m-8 md:p-10">
+      <section className="m-4 rounded-3xl bg-[#F5F5F0] p-5 text-black md:m-8 md:p-10">
         {experiences.map(e => (
           <div key={e.id} className="grid gap-8 md:grid-cols-2">
-            <div>
+            <div className="min-w-0">
               <div className="text-xs uppercase">experience · {e.startDate} – {e.endDate}</div>
-              <h2 className="mt-3 font-[family-name:var(--display)] text-5xl uppercase leading-[0.9] md:text-7xl">{e.organization}</h2>
+              <h2 className="mt-3 break-words font-[family-name:var(--display)] text-3xl uppercase leading-[0.9] sm:text-5xl md:text-7xl">{e.organization}</h2>
               <div className="mt-3 inline-block rounded-full bg-black px-4 py-1 text-sm text-[#D7FF3A]">{e.role}</div>
             </div>
-            <ul className="space-y-3 text-sm">
+            <ul className="min-w-0 space-y-3 text-sm">
               {e.work.map(w => (
                 <li key={w} className="border-t border-black/20 pt-3">{w}</li>
               ))}
@@ -208,13 +208,13 @@ export default function Home() {
       </section>
 
       {/* Contact */}
-      <footer id="contact" className="mt-8 bg-[#D7FF3A] p-4 text-black md:p-8">
+      <footer id="contact" className="mt-8 bg-[#D7FF3A] p-4 pb-24 text-black md:p-8">
         <p className="text-xs uppercase">(05) got something weird and hard?</p>
         <a href={emailUrl} className="mt-4 block font-[family-name:var(--display)] text-[13vw] uppercase leading-[0.85] transition-opacity hover:opacity-70">
           Let&apos;s talk →
         </a>
         <div className="mt-8 flex flex-col gap-4 border-t-4 border-black pt-6 text-sm uppercase md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap gap-6">
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
             {links.map(l => (
               <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer" className="underline decoration-2 underline-offset-4 hover:no-underline">
                 {l.label} ↗
